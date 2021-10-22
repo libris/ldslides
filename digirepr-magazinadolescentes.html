@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<title>Presenter Demo</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="ldslides.css" />
+<script type="module">
+  import {Steps} from './ldslides.js'
+
+  let steps = new Steps(window)
+
+  steps.load(`
+<print-1> a :Print ;
+  :issuanceType :Monograph ;
+  :carrierType <https://id.kb.se/marc/RegularPrint> ,
+    <https://id.kb.se/marc/RegularPrintReproduction> ;
+  :hasTitle [ a :Title ;
+      :hasPart [ a :TitlePart ; :partNumber "T. 4." ] ;
+      :mainTitle "Magazin des adolescentes, ou Dialogues entre une sage gouvernante, et plusieurs de ses élèves de la première distinction" ] ,
+    [ a :VariantTitle ;
+      :mainTitle "Magazin des adolescentes, ou Dialogues d'une sage gouvernante, et plusieurs de ses élèves de la première distinction" ] ;
+  :instanceOf [ a :Text ;
+      :classification [ a :Classification ;
+          :code "E" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :sameAs <https://id.kb.se/term/kssb%2F8/> ;
+              :version "8" ] ] ;
+      :contribution [ a :PrimaryContribution ;
+          :agent [ a :Person ;
+              :familyName "Leprince de Beaumont" ;
+              :givenName "Jeanne-Marie." ] ] ;
+      :genreForm <https://id.kb.se/marc/FictionNotFurtherSpecified> ;
+      :intendedAudience <https://id.kb.se/marc/General> ;
+      :language <https://id.kb.se/language/fre> ;
+      :subject [ a :Topic ;
+          :label "Undervisning -- Läseböcker" ] ] ;
+  :editionStatement "Nouv. éd., rev. & corr." ;
+  :extent [ a :Extent ; :label "4 vol." ] ;
+  :hasPart [ a :Instance ; :extent [ a :Extent ; :label "278 s." ] ] ;
+  :publication [ a :PrimaryPublication ;
+      :country <https://id.kb.se/country/ne> ;
+      :hasPart [ a :Publication ;
+          :place [ a :Place ;
+              :label "La Haie" ] ] ,
+        [ a :Publication ;
+          :agent [ a :Agent ;
+              :label "Pierre Gosse, Junior" ] ;
+          :place [ a :Place ;
+              :label "Leide" ] ] ,
+        [ a :Publication ;
+          :agent [ a :Agent ;
+              :label "Elie Luzac" ] ] ;
+      :year "1766" ] ;
+  :relationship [ a :Relationship ;
+      :entity [ a :Work ;
+          :hasTitle [ a :Title ;
+              :mainTitle "Dialogues d'une sage gouvernante." ] ] ] ;
+  :responsibilityStatement "par made. Le Prince de Beaumont" ;
+  :supplementTo [ a :Instance ;
+      :editionStatement "Nouv. éd., rev. & corr." ;
+      :hasTitle [ a :Title ;
+          :mainTitle "Magazin des adolescentes, ou Dialogues entre une sage gouvernante, et plusieurs de ses élèves de la première distinction" ] ;
+      :instanceOf [ a :Work ;
+          :contribution [ a :PrimaryContribution ;
+              :agent [ a :Agent ;
+                  :label "Leprince de Beaumont, Jeanne-Marie" ] ] ] ;
+      :provisionActivityStatement "La Haie ; Leide : Pierre Gosse, Junior : Elie Luzac, 1766" ] .
+`)
+
+  steps.display('Extrahera verket')
+  steps.extractAsLink('print-1', 'instanceOf', 'work-1')
+
+  // Överkurs! Fixa till lite av varje i den tryckta...
+  steps.display('(Extrahera supplement)')
+  steps.extractAsLink('print-1', 'supplementTo', 'series-1')
+  steps.display('(Ta bort redundant varianttitel)')
+  steps.drop('print-1', ['hasTitle', 1])
+  steps.display('(Ändra till serielänk)')
+  steps.move('print-1', 'supplementTo', 'print-1', 'hasSeries')
+  steps.display('(Typa som serie)')
+  steps.add('series-1', 'issuanceType', {'@id': 'Serial'})
+  steps.display('(Extrahera bidragare)')
+  steps.extractAsLink('work-1', ['contribution', 'agent'], 'agent-1')
+  steps.display('(Länka bidragare från serien)')
+  steps.replace('series-1', ['instanceOf', 'contribution', 'agent'], {['@id']: 'agent-1'})
+  //steps.display('(Dölj serie och agent)', {incomplete: true})
+  //steps.drop('series-1')
+  //steps.complete().drop('agent-1')
+
+  let library = {'@id': 'https://libris.kb.se/library/S'}
+
+  steps.display('Ny elektronisk faksimil')
+  steps.create(`
+    <electronic-1> a :Electronic ;
+      :issuanceType :Monograph ;
+      :carrierType <https://id.kb.se/term/rda/OnlineResource> .
+  `)
+
+  steps.display('Länka verk')
+  steps.add('electronic-1', 'instanceOf', {'@id': 'work-1'})
+
+  steps.display('Länka original')
+  steps.add('electronic-1', 'reproductionOf', {'@id': 'print-1'})
+
+  steps.display('Länka mediaobjekt')
+  steps.add('electronic-1', 'associatedMedia', {'@id': 'digitalization-1'})
+
+  steps.display('Beskriv reproduktionen')
+  steps.add('electronic-1', 'reproduction', {
+    '@type': 'DigitalReproduction',
+    year: '2021',
+    agent: library,
+    country: {'@id': 'https://id.kb.se/country/sw'},
+    place: {'@id': 'http://www.wikidata.org/entity/Q1754'}
+  })
+
+  steps.display('Länka licens')
+  steps.add('electronic-1', 'usageAndAccessPolicy', {'@id': 'https://id.kb.se/license/free'})
+
+  steps.display('Länka bibliografii')
+  steps.add('electronic-1', 'meta', {'bibliography': {'@id': 'https://libris.kb.se/library/DIGI'}})
+
+  steps.display('Kopiera titel')
+  steps.copy('print-1', 'hasTitle', 'electronic-1')
+
+  steps.display('Skapa bestånd')
+  steps.create(` <electronic-1-item-1> a :Item . `)
+  steps.display('Länka faksimil')
+  steps.add('electronic-1-item-1', 'itemOf', {'@id': 'electronic-1'})
+  steps.display('Länka bibliotek')
+  steps.add('electronic-1-item-1', 'heldBy', library)
+
+  //steps.display('Flytta titel istället?', {incomplete: true})
+  //steps.move('print-1', 'hasTitle', 'work-1')
+  //steps.complete().drop('electronic-1', 'hasTitle')
+
+  // TODO: move cannot take paths yes
+  //steps.display('Knåda om utgivningsdetaljer', {incomplete: true})
+  //steps.complete().move('print-1', ['publication', 1, 'agent'], ['publication', 0])
+  //steps.complete().drop('print-1', ['publication', 1])
+
+</script>

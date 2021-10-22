@@ -1,0 +1,44 @@
+@import url('//niklasl.github.io/ldtr/demo//visualizer.css');
+@import url('//niklasl.github.io/ldtr/demo//arrows.css');
+@import url('//niklasl.github.io/ldtr/demo//colors/vintage.css');
+
+body {
+  font-family: verdana;
+  font-size: 11pt;
+}
+
+section {
+  width: 120em;
+}
+
+article.card {
+  width: 32em;
+  float: left;
+  overflow: auto;
+}
+
+button {
+  position: absolute;
+  bottom: 2.5em;
+  right: 2.5em;
+}
+
+div.display {
+  background-color: #fafafa;
+  width: 21em;
+  position: fixed;
+  top: 0.5em;
+  right: 0.5em;
+  font-size: 12pt;
+  font-weight: bold;
+}
+
+p.complete {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+path.arrow {
+  stroke: rgb(127, 127, 127, 0.6);
+  marker-end: url(#arrowhead-rev);
+}
