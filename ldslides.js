@@ -9,23 +9,29 @@ export class Steps {
     this.steps = []
     this.i = 0
     this.data = null
+    this.dataSnapshot = 'null'
+    this.dataHistory = []
 
     window.onload = async () => {
       this.doc = window.document
+
+      this.displayDiv = this.doc.createElement('div')
+      this.displayDiv.classList.add('display')
+      this.doc.body.appendChild(this.displayDiv)
+
+      this.noteDiv = this.doc.createElement('div')
+      this.noteDiv.classList.add('note')
+      this.doc.body.appendChild(this.noteDiv)
+
+      this.viewDiv = this.doc.createElement('section')
+      this.doc.body.appendChild(this.viewDiv)
+
       this.nextBtn = this.doc.createElement('button')
       this.nextBtn.innerText = '>'
       this.nextBtn.addEventListener('click', evt => {
         this.nextStep()
       })
       this.doc.body.appendChild(this.nextBtn)
-
-      this.displayDiv = this.doc.createElement('div')
-      this.displayDiv.classList.add('display')
-      this.doc.body.appendChild(this.displayDiv)
-
-      this.viewDiv = this.doc.createElement('section')
-      this.doc.body.appendChild(this.viewDiv)
-
       this.nextBtn.focus()
       this.nextStep()
     }
@@ -35,12 +41,15 @@ export class Steps {
     if (this.done) {
       this.done = false
       this.i = 0
+      this.dataSnapshot = 'null'
+      this.dataHistory = []
       this.data = []
       this.viewDiv.innerHTML = ''
       this.displayDiv.innerHTML = ''
       this.nextBtn.innerText = '>'
       this.nextStep()
     } else if (this.i >= this.steps.length) {
+      this.redraw()
       this.done = true
       this.nextBtn.innerText = '<<'
       this.nextBtn.blur()
@@ -49,9 +58,17 @@ export class Steps {
     }
   }
 
+  async drawSnapshot (snapshotData) {
+    visualize(this.viewDiv, snapshotData)
+    renderArrows(this.viewDiv)
+  }
+
   async redraw () {
     if (this.data != null) {
-      this.checkPrev()
+      if (this.checkPrev()) {
+        this.dataSnapshot = JSON.stringify(this.data)
+      }
+
       visualize(this.viewDiv, this.data)
       renderArrows(this.viewDiv)
     }
@@ -70,17 +87,37 @@ export class Steps {
     })
   }
 
-  display (text, { incomplete = false } = {}) {
+  display (text, { incomplete = false, note } = {}) {
     this.steps.push(async () => {
       this.incomplete = incomplete
       let p = this.doc.createElement('p')
-      p.innerHTML += `<input type=checkbox> ${text}`
+      p.innerHTML += `<label><input type=checkbox> ${text}</label>`
       this.displayDiv.appendChild(p)
+
+      p.addEventListener('click', evt => {
+        if (!p.classList.contains('complete')) {
+          evt.stopPropagation()
+          evt.preventDefault()
+          const fwd = () => {
+            this.nextStep()
+            setTimeout(() => {
+              if (this.incomplete) fwd()
+              else this.nextStep()
+            }, 100)
+          }
+          fwd()
+        }
+      })
+
+      if (note != null) {
+        this.noteDiv.innerHTML = note
+        this.noteDiv.classList.add('showing')
+      }
     })
   }
 
   complete () {
-    this.steps.push(async () => {
+    this.steps.push(() => {
       this.incomplete = false
       this.nextStep()
     })
@@ -88,12 +125,50 @@ export class Steps {
   }
 
   checkPrev () {
-    if (this.incomplete) return
+    if (this.incomplete) return false
 
-    let elem = this.displayDiv.querySelector('p:last-of-type > input[type=checkbox]')
-    if (elem) {
-      elem.checked = true
-      elem.parentNode.classList.add('complete')
+    this.noteDiv.classList.remove('showing')
+    let input = this.displayDiv.querySelector('p:last-of-type input[type=checkbox]')
+    if (input) {
+      input.checked = true
+      let p = input.closest('p')
+      if (p.classList.contains('complete')) return true
+      p.classList.add('complete')
+
+      const at = this.dataHistory.length
+      this.dataHistory.push(JSON.parse(this.dataSnapshot))
+
+      p.addEventListener('click', evt => {
+        evt.stopPropagation()
+        evt.preventDefault()
+        if (input.checked) {
+          checkInDirection(p, 'next', false)
+          this.drawSnapshot(this.dataHistory[at])
+        } else {
+          checkInDirection(p, 'prev', true)
+          this.drawSnapshot(at + 1 < this.dataHistory.length ?
+                            this.dataHistory[at + 1] :
+                            this.data)
+        }
+      })
+    }
+
+    return true
+  }
+
+  highlight(o, target=false) {
+    if (o != null && typeof o == 'object') {
+      for (o of Array.isArray(o) ? o : [o]) {
+        if (ID in o) {
+          let card = document.getElementById(o[ID])
+          if (card) {
+            card.classList.add(target ? 'target' : 'selected')
+            if (target) {
+              card.dispatchEvent(new MouseEvent('mouseover'))
+            }
+          }
+        }
+      }
     }
   }
 
@@ -102,6 +177,7 @@ export class Steps {
       let data = typeof o === 'string' ? await this.parse(o) : o
       for (let item of data[GRAPH]) this.data[GRAPH].push(item)
       this.redraw()
+      for (let item of data[GRAPH]) this.highlight(item, true)
     })
   }
 
@@ -121,6 +197,8 @@ export class Steps {
         this.data[GRAPH].push(o)
       }
       this.redraw()
+      this.highlight({[ID]: from})
+      this.highlight(o, true)
     })
   }
 
@@ -135,59 +213,29 @@ export class Steps {
     }
   }
 
-  add (from, p, o, aslist = false) {
+  add (to, p, o, aslist = false) {
     this.steps.push(async () => {
-      for (const item of this.data[GRAPH]) {
-        if (item[ID] === from) {
-          let { owner, key, object } = find(item, p)
-          if (aslist) {
-            if (owner[key] == null) {
-              owner[key] = []
-            } else if (!Array.isArray(owner[key])) {
-              owner[key] = [ owner[key] ]
-            }
-          }
-          if (Array.isArray(owner[key])) {
-            owner[key].push(o)
-          } else {
-            owner[key] = o
-          }
-          break
-        }
-      }
+      add(this.data[GRAPH], to, p, o, aslist)
       this.redraw()
+      this.highlight(o, true)
+      this.highlight({[ID]: to})
     })
   }
 
-  replace (from, p, repl = null) {
+  replace (from, p, repl = null, p2 = null) {
     this.steps.push(async () => {
-      for (const item of this.data[GRAPH]) {
-        if (item[ID] === from) {
-          let { owner, key, object } = find(item, p)
-          if (typeof key === 'string') {
-            if (repl == null) {
-              delete owner[key]
-            } else {
-              owner[key] = repl
-            }
-          } else {
-            if (repl == null) {
-              owner.splice(key, 1)
-            } else {
-              owner.splice(key, 1, repl)
-            }
-          }
-          break
-        }
-      }
+      replace(this.data[GRAPH], from, p, repl, p2)
       this.redraw()
+      this.highlight({[ID]: from})
+      this.highlight(repl, true)
     })
   }
 
   copy (from, p, to) {
     this.steps.push(async () => {
       let o = null
-      for (const item of this.data[GRAPH]) {
+      let item
+      for (item of this.data[GRAPH]) {
         if (item[ID] === from) {
           o = JSON.parse(JSON.stringify((item[p])))
           break
@@ -202,28 +250,16 @@ export class Steps {
         }
       }
       this.redraw()
+      this.highlight({[ID]: to})
     })
   }
 
   move (from, p, to, p2 = p) {
     this.steps.push(async () => {
-      let o = null
-      for (const item of this.data[GRAPH]) {
-        if (item[ID] === from) {
-          o = item[p]
-          delete item[p]
-          break
-        }
-      }
-      if (o != null) {
-        for (const item of this.data[GRAPH]) {
-          if (item[ID] === to) {
-            item[p2] = o
-            break
-          }
-        }
-      }
+      let dropped = replace(this.data[GRAPH], from, p)
+      add(this.data[GRAPH], to, p2, dropped)
       this.redraw()
+      this.highlight({[ID]: to})
     })
   }
 }
@@ -242,4 +278,74 @@ function find (item, p) {
     object = owner[p]
   }
   return { owner, key, object }
+}
+
+function checkInDirection (itemElement, dir, checked) {
+  while (itemElement) {
+    if (!itemElement.classList.contains('complete')) break
+
+    let input = itemElement.querySelector('input[type=checkbox]')
+    if (input) input.checked = checked
+    else break
+
+    itemElement = dir === 'next' ? itemElement.nextElementSibling : itemElement.previousElementSibling
+  }
+}
+
+function add (graph, to, p, o, aslist = false) {
+  for (let item of graph) {
+    if (item[ID] === to) {
+      let { owner, key, object } = find(item, p)
+      if (aslist) {
+        if (owner[key] == null) {
+          owner[key] = []
+        } else if (!Array.isArray(owner[key])) {
+          owner[key] = [ owner[key] ]
+        }
+      }
+      if (Array.isArray(owner[key])) {
+        owner[key].push(o)
+      } else {
+        owner[key] = o
+      }
+      break
+    }
+  }
+}
+
+function replace (graph, from, p, repl = null, p2 = null) {
+  let dropped
+  for (const item of graph) {
+    if (item[ID] === from) {
+      let { owner, key, object } = find(item, p)
+      if (typeof key === 'string') {
+        if (repl == null) {
+          dropped = owner[key]
+          delete owner[key]
+        } else {
+          if (p2) {
+            const entries = Object.entries(owner)
+            for (let k in owner) delete owner[k]
+            for (let [k, v] of entries) {
+              if (k === key) {
+                owner[p2] = repl
+              } else {
+                owner[k] = v
+              }
+            }
+          } else {
+            owner[key] = repl
+          }
+        }
+      } else {
+        if (repl == null) {
+          dropped = owner.splice(key, 1)
+        } else {
+          owner.splice(key, 1, repl)
+        }
+      }
+      break
+    }
+  }
+  return dropped
 }

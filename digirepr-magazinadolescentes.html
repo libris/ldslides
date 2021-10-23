@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<title>Presenter Demo</title>
+<title>Representation 1 : LD Slides</title>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="ldslides.css" />
 <script type="module">
@@ -66,27 +66,32 @@
       :provisionActivityStatement "La Haie ; Leide : Pierre Gosse, Junior : Elie Luzac, 1766" ] .
 `)
 
-  steps.display('Extrahera verket')
-  steps.extractAsLink('print-1', 'instanceOf', 'work-1')
+  const print = 'print-1'
+  const inst2 = 'instance-2'
+  const work = 'work-1'
+  let library = {'@id': 'https://libris.kb.se/library/S'}
+
+  steps.display('Extrahera verket', {note: 'Så att vi kan dela det med faksimilen'})
+  steps.extractAsLink(print, 'instanceOf', work)
 
   // Överkurs! Fixa till lite av varje i den tryckta...
-  steps.display('(Extrahera supplement)')
-  steps.extractAsLink('print-1', 'supplementTo', 'series-1')
-  steps.display('(Ta bort redundant varianttitel)')
-  steps.drop('print-1', ['hasTitle', 1])
+  steps.display('Puts: Extrahera supplement', {note: 'Putsar lite för att tydliggöra varför varianttiteln är överflödig'})
+  steps.extractAsLink(print, 'supplementTo', inst2)
+  steps.display('Puts: Ta bort redundant varianttitel', {note: 'Denna titel är en kopia av supplementets titel'})
+  steps.drop(print, ['hasTitle', 1])
+  /*
   steps.display('(Ändra till serielänk)')
-  steps.move('print-1', 'supplementTo', 'print-1', 'hasSeries')
+  steps.move(print, 'supplementTo', print, 'hasSeries')
   steps.display('(Typa som serie)')
-  steps.add('series-1', 'issuanceType', {'@id': 'Serial'})
-  steps.display('(Extrahera bidragare)')
-  steps.extractAsLink('work-1', ['contribution', 'agent'], 'agent-1')
-  steps.display('(Länka bidragare från serien)')
-  steps.replace('series-1', ['instanceOf', 'contribution', 'agent'], {['@id']: 'agent-1'})
+  steps.add(inst2, 'issuanceType', {'@id': 'Serial'})
+  */
+  steps.display('Puts: Extrahera bidragare')
+  steps.extractAsLink(work, ['contribution', 'agent'], 'agent-1')
+  steps.display('Puts: Länka bidragare från supplement')
+  steps.replace(inst2, ['instanceOf', 'contribution', 'agent'], {['@id']: 'agent-1'})
   //steps.display('(Dölj serie och agent)', {incomplete: true})
-  //steps.drop('series-1')
+  //steps.drop(inst2)
   //steps.complete().drop('agent-1')
-
-  let library = {'@id': 'https://libris.kb.se/library/S'}
 
   steps.display('Ny elektronisk faksimil')
   steps.create(`
@@ -96,10 +101,10 @@
   `)
 
   steps.display('Länka verk')
-  steps.add('electronic-1', 'instanceOf', {'@id': 'work-1'})
+  steps.add('electronic-1', 'instanceOf', {'@id': work})
 
   steps.display('Länka original')
-  steps.add('electronic-1', 'reproductionOf', {'@id': 'print-1'})
+  steps.add('electronic-1', 'reproductionOf', {'@id': print})
 
   steps.display('Länka mediaobjekt')
   steps.add('electronic-1', 'associatedMedia', {'@id': 'digitalization-1'})
@@ -120,7 +125,7 @@
   steps.add('electronic-1', 'meta', {'bibliography': {'@id': 'https://libris.kb.se/library/DIGI'}})
 
   steps.display('Kopiera titel')
-  steps.copy('print-1', 'hasTitle', 'electronic-1')
+  steps.copy(print, 'hasTitle', 'electronic-1')
 
   steps.display('Skapa bestånd')
   steps.create(` <electronic-1-item-1> a :Item . `)
@@ -129,13 +134,10 @@
   steps.display('Länka bibliotek')
   steps.add('electronic-1-item-1', 'heldBy', library)
 
-  //steps.display('Flytta titel istället?', {incomplete: true})
-  //steps.move('print-1', 'hasTitle', 'work-1')
-  //steps.complete().drop('electronic-1', 'hasTitle')
-
-  // TODO: move cannot take paths yes
-  //steps.display('Knåda om utgivningsdetaljer', {incomplete: true})
-  //steps.complete().move('print-1', ['publication', 1, 'agent'], ['publication', 0])
-  //steps.complete().drop('print-1', ['publication', 1])
+  /*
+  steps.display('Flytta titel till verket istället?', {incomplete: true})
+  steps.move(print, 'hasTitle', work)
+  steps.complete().drop('electronic-1', 'hasTitle')
+  */
 
 </script>

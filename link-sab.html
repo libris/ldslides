@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<title>Linking : LD Slides</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="ldslides.css" />
+<script type="module">
+  import {Steps} from './ldslides.js'
+
+  let steps = new Steps(window)
+
+
+  steps.load(`
+<btm92gjn5q8pkjx#it> a :Instance ;
+  :issuanceType :Monograph ;
+
+  marc:mediaTerm "Kartografiskt material" ;
+
+  :hasTitle [ a :Title ;
+      :mainTitle "Vattendragsutredningens förslag till vattendrag som bör skyddas enligt naturresurslagen (NRL)" ] ;
+  :responsibilityStatement "producerad av SMHI" ;
+
+  :instanceOf [ a :Cartography ;
+      :contribution [ a :PrimaryContribution ;
+          :agent <tr5757qc3zhq910#it> ] ;
+      :genreForm <https://id.kb.se/marc/GovernmentPublicationType-1> ;
+      :language <https://id.kb.se/language/swe> ;
+      :subject <https://id.kb.se/term/sao/Sverige> ;
+      :classification [ a :Classification ;
+          :code "Ubbbd-c" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :sameAs <https://id.kb.se/term/kssb%2F6/> ;
+              :version "6" ] ] ,
+        [ a :Classification ;
+          :code "Uh-c" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :sameAs <https://id.kb.se/term/kssb%2F6/> ;
+              :version "6" ] ] ,
+        [ a :Classification ;
+          :code "Ubbbd-c/K" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :version "6" ] ] ,
+        [ a :Classification ;
+          :code "Uh-c/K" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :version "6" ] ] ;
+      :cartographicAttributes [ a :Cartographic ;
+          :coordinates "Ö 10⁰50'-Ö 24⁰11'/N 69⁰04'-N 55⁰20'" ;
+          :scale [ a :Scale ;
+              :label "Skala 1:2 500 000" ] ] ;
+      ] ;
+
+  :projection <https://id.kb.se/marc/MapsProjectionType-a> ;
+
+  :classification [ a :Classification ;
+      :code "Ubbbd-c/K" ;
+      :inScheme [ a :ConceptScheme ;
+          :code "kssb" ;
+          :sameAs <https://id.kb.se/term/kssb%2F6/> ;
+          :version "6" ] ] ,
+    [ a :Classification ;
+      :code "Uh-c/K" ;
+      :inScheme [ a :ConceptScheme ;
+          :code "kssb" ;
+          :sameAs <https://id.kb.se/term/kssb%2F6/> ;
+          :version "6" ] ] ;
+
+  :publication [ a :PrimaryPublication ;
+      :country <https://id.kb.se/country/sw> ;
+      :place [ a :Place ; :label "[Stockholm]" ] ;
+      :year "1996" ] ;
+
+  :meta <btm92gjn5q8pkjx> .
+
+`)
+  const ref = id => ( { ['@id']: id } )
+
+  const print = 'btm92gjn5q8pkjx#it'
+  const work = 'work1#it'
+  const sabref = ref('https://id.kb.se/term/kssb/6')
+
+  steps.display('Extrahera verket till ny post')
+  steps.extractAsLink(print, 'instanceOf', work)
+
+  steps.display('Ta bort redundant klassifikation', {incomplete: true})
+  steps.drop(work, ['classification', 3])
+  steps.complete().drop(work, ['classification', 2])
+
+  steps.display('Visa SAB (för referens)')
+  steps.create(`
+<SAB> {
+    <https://id.kb.se/term/kssb/6> a :ConceptScheme; :code "kssb"; :version "6" .
+
+    <https://id.kb.se/term/kssb/6/-c> a :Classification ; :code "-c"; :prefLabel "Sverige"@sv .
+    <https://id.kb.se/term/kssb/6/media/K> a :Classification ; :code "/K"; :prefLabel "Kartor in plano"@sv .
+
+    <https://id.kb.se/term/kssb/6/Ubbbd> a :Classification ; :code "Ubbbd"; :prefLabel "Floder, älvar, åar"@sv .
+    <https://id.kb.se/term/kssb/6/Uh> a :Classification ; :code "Uh"; :prefLabel "Miljöfrågor och naturskydd"@sv .
+}
+  `)
+
+  steps.display('Länka scheme', {incomplete: true})
+  steps.replace(print, ['classification', 0, 'inScheme'], sabref)
+  steps.replace(print, ['classification', 1, 'inScheme'], sabref)
+  steps.replace(work, ['classification', 0, 'inScheme'], sabref)
+  steps.complete().replace(work, ['classification', 1, 'inScheme'], sabref)
+
+  steps.display('"Prekoordinera" koder', {incomplete: true})
+  const dash_c = 'https://id.kb.se/term/kssb/6/-c'
+  const media_k = 'https://id.kb.se/term/kssb/6/media/K'
+
+  const uddb = 'https://id.kb.se/term/kssb/6/Ubbbd'
+  const uddb_c = `${uddb}-c`
+
+  const uh = 'https://id.kb.se/term/kssb/6/Uh'
+  const uh_c = `${uh}-c`
+
+  steps.extractAsLink(work, ['classification', 0], uddb_c)
+  steps.complete().extractAsLink(work, ['classification', 1], uh_c)
+
+  steps.display('Länka kod-betydelser', {incomplete: true})
+  //steps.add(uddb_c, 'broader', [ref(uddb), ref(dash_c)])
+  //steps.add(uh_c, 'broader', [ref(uh), ref(dash_c)])
+  steps.replace(uddb_c, 'code', [ref(uddb), ref(dash_c)], 'termComponentList')
+  steps.replace(uh_c, 'code', [ref(uh), ref(dash_c)], 'termComponentList')
+
+  steps.replace(print, ['classification', 0, 'code'], [ref(uddb_c), ref(media_k)], 'termComponentList')
+  steps.complete().replace(print, ['classification', 1, 'code'], [ref(uh_c), ref(media_k)], 'termComponentList')
+
+</script>

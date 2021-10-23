@@ -4,33 +4,70 @@
 
 body {
   font-family: verdana;
-  font-size: 11pt;
+  font-size: 0.75vw;
+  margin: 0;
+  padding: 0;
 }
 
 section {
   width: 120em;
+  padding-left: 0.6em;
+}
+
+article.card .card p {
+  margin-left: 0;
+}
+
+.card .card {
+  margin-left: 1em;
 }
 
 article.card {
+  min-width: auto;
+  max-width: auto;
   width: 32em;
   float: left;
   overflow: auto;
 }
 
-button {
-  position: absolute;
-  bottom: 2.5em;
-  right: 2.5em;
+article.card.graph article.card {
+  width: 30em;
 }
+
+article.card.target {
+  background-color: rgba(200, 242, 255, 0.8);
+}
+
+path.arrow {
+  opacity: 0;
+}
+path.arrow.rel {
+  opacity: 0.2;
+  stroke: rgb(103, 111, 111, 0.6);
+}
+#arrowhead-rel { fill: rgb(103, 111, 111, 0.6); }
+path.arrow.rev {
+  opacity: 1;
+  stroke: #601;
+}
+#arrowhead-rev { fill: #601; }
+span.arrow.rev { visibility: hidden; }
 
 div.display {
   background-color: #fafafa;
-  width: 21em;
+  width: 24em;
   position: fixed;
   top: 0.5em;
   right: 0.5em;
-  font-size: 12pt;
+  font-size: 0.9vw;
   font-weight: bold;
+  z-index: 20;
+}
+
+div.display > p {
+  display: block;
+  padding: 1em 0.5em;
+  margin: 0;
 }
 
 p.complete {
@@ -38,7 +75,31 @@ p.complete {
   opacity: 0.5;
 }
 
-path.arrow {
-  stroke: rgb(127, 127, 127, 0.6);
-  marker-end: url(#arrowhead-rev);
+p.complete:hover {
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+div.note {
+  background-color: #fefeee;
+  width: 21em;
+  padding: 0.5em;
+  position: fixed;
+  bottom: 6em;
+  right: 0.5em;
+  font-size: 0.9vw;
+  font-weight: bold;
+  border: 1px dashed #000;
+  visibility: hidden;
+}
+
+div.note.showing {
+  visibility: visible;
+}
+
+button {
+  position: fixed;
+  bottom: 2.5em;
+  right: 2.5em;
+  z-index: 100;
 }

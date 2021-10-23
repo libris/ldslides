@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<title>Cleanup : LD Slides</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="ldslides.css" />
+<script type="module">
+  import {Steps} from './ldslides.js'
+
+  let steps = new Steps(window)
+
+  steps.load(`
+<btm92gjn5q8pkjx#it> a :Instance ;
+  :issuanceType :Monograph ;
+
+  marc:mediaTerm "Kartografiskt material" ;
+
+  :hasTitle [ a :Title ;
+      :mainTitle "Vattendragsutredningens förslag till vattendrag som bör skyddas enligt naturresurslagen (NRL)" ;
+      :titleRemainder "[Sverige]" ] ;
+  :responsibilityStatement "producerad av SMHI" ;
+
+  :instanceOf [ a :Cartography ;
+      :contribution [ a :PrimaryContribution ;
+          :agent <tr5757qc3zhq910#it> ] ;
+      :genreForm <https://id.kb.se/marc/GovernmentPublicationType-1> ;
+      :language <https://id.kb.se/language/swe> ;
+      :subject <https://id.kb.se/term/sao/Sverige> ;
+      :classification [ a :Classification ;
+          :code "Ubbbd-c" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :sameAs <https://id.kb.se/term/kssb%2F6/> ;
+              :version "6" ] ] ,
+        [ a :Classification ;
+          :code "Uh-c" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :sameAs <https://id.kb.se/term/kssb%2F6/> ;
+              :version "6" ] ] ,
+        [ a :Classification ;
+          :code "Ubbbd-c/K" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :version "6" ] ] ,
+        [ a :Classification ;
+          :code "Uh-c/K" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :version "6" ] ] ;
+      :cartographicAttributes [ a :Cartographic ;
+          marc:easternmostLongitudeCoordinates "e0241100" ;
+          marc:northernmostLatitudeCoordinates "n0690400" ;
+          marc:southernmostLatitudeCoordinates "n0552000" ;
+          marc:westernmostLongitudeCoordinates "e0105000" ;
+          :scale [ a marc:LinearScale ;
+              marc:constantRatioLinearHorizontalScale "2500000" ] ] ,
+        [ a :Cartographic ;
+          :coordinates "Ö 10⁰50'-Ö 24⁰11'/N 69⁰04'-N 55⁰20'" ;
+          :scale [ a :Scale ;
+              :label "Skala 1:2 500 000" ] ] ,
+        [ a :Cartographic ;
+          :coordinates "Måttenhet för koordinaterna: grader, minuter och sekunder (0-360⁰)" ] ;
+      ] ;
+
+  :projection <https://id.kb.se/marc/MapsProjectionType-a> ;
+
+  :classification [ a :Classification ;
+      :code "Ubbbd-c/K" ;
+      :inScheme [ a :ConceptScheme ;
+          :code "kssb" ;
+          :sameAs <https://id.kb.se/term/kssb%2F6/> ;
+          :version "6" ] ] ,
+    [ a :Classification ;
+      :code "Uh-c/K" ;
+      :inScheme [ a :ConceptScheme ;
+          :code "kssb" ;
+          :sameAs <https://id.kb.se/term/kssb%2F6/> ;
+          :version "6" ] ] ;
+
+  :extent [ a :Extent ; :label "1 karta" ] ;
+  :hasDimensions [ a :Dimensions ; :label "61 x 26 cm" ] ;
+  :physicalDetailsNote "färg" ;
+  :tableOfContents [ a :TableOfContents ;
+      :label "Med förteckningar över skyddsvärda vattendrag" ] ;
+
+  :manufacture [ a :Manufacture ;
+      :agent [ a :Agent ;
+          :label "Sjöfartsverkets tr." ] ;
+      :place [ a :Place ;
+          :label "[Norrköping]" ] ] ;
+
+  :publication [ a :PrimaryPublication ;
+      :agent [ a :Agent ;
+          :label "[Fritze]" ] ;
+      :country <https://id.kb.se/country/sw> ;
+      :place [ a :Place ;
+          :label "[Stockholm]" ] ;
+      :year "1996" ] ;
+
+  :otherPhysicalFormat [ a :Instance ;
+      :describedBy [ a :Record ;
+          :controlNumber "18315781" ] ;
+      :hasTitle [ a :Title ;
+          :mainTitle "Vattendragsutredningens förslag till vattendrag som bör skyddas enligt naturresurslagen (NRL)" ] ;
+      marc:displayText "Digitaliserad version" ] ;
+
+  :hasNote [ a :Note ;
+      :label "Bil. till: Omtankar om vattendrag, ISBN 91-38-20401-0 (Statens offentliga utredningar, ISSN 0375-250X; 1996:155)" ] ;
+
+  :relationship [ a :Relationship ;
+      :entity [ a :Work ;
+          :hasTitle [ a :Title ;
+              :mainTitle "Omtankar om vattendrag" ] ] ] ;
+
+  :seriesMembership [ a :SeriesMembership ;
+      :inSeries [ a :Instance ;
+          :identifiedBy [ a :ISSN ;
+              :value "0375-250X" ] ;
+          :instanceOf <gdsvzrv0094grdt#it> ] ;
+      marc:filingOfSeriesenumeration "1996" ,
+        "155" ;
+      :seriesEnumeration "1996:155" ] ;
+
+  :meta <btm92gjn5q8pkjx> .
+
+
+<p71b9cw139dx631#it> a :Electronic ;
+  :issuanceType :Monograph ;
+  :carrierType <https://id.kb.se/marc/OnlineResource> ;
+
+  marc:mediaTerm "Elektronisk resurs" ,
+    "Kartografiskt material" ;
+
+  :hasTitle [ a :Title ;
+      :mainTitle "Vattendragsutredningens förslag till vattendrag som bör skyddas enligt naturresurslagen (NRL)" ;
+      :titleRemainder "[Sverige]" ] ;
+  :responsibilityStatement "producerad av SMHI" ;
+
+  :instanceOf [ a :Cartography ;
+      :cartographicAttributes [ a :Cartographic ;
+          marc:easternmostLongitudeCoordinates "e0241100" ;
+          marc:northernmostLatitudeCoordinates "n0690400" ;
+          marc:southernmostLatitudeCoordinates "n0552000" ;
+          marc:westernmostLongitudeCoordinates "e0105000" ;
+          :scale [ a marc:LinearScale ;
+              marc:constantRatioLinearHorizontalScale "2500000" ] ] ,
+        [ a :Cartographic ;
+          :coordinates "Ö 10⁰50'-Ö 24⁰11'/N 69⁰04'-N 55⁰20'" ;
+          :scale [ a :Scale ;
+              :label "Skala 1:2 500 000" ] ] ,
+        [ a :Cartographic ;
+          :coordinates "Måttenhet för koordinaterna: grader, minuter och sekunder (0-360⁰)" ] ;
+      :classification [ a :Classification ;
+          :code "Ubbbd-c" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :sameAs <https://id.kb.se/term/kssb%2F6/> ;
+              :version "6" ] ] ,
+        [ a :Classification ;
+          :code "Uh-c" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :sameAs <https://id.kb.se/term/kssb%2F6/> ;
+              :version "6" ] ] ,
+        [ a :Classification ;
+          :code "Ubbbd-c/K" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :version "6" ] ] ,
+        [ a :Classification ;
+          :code "Uh-c/K" ;
+          :inScheme [ a :ConceptScheme ;
+              :code "kssb" ;
+              :version "6" ] ] ;
+      :contribution [ a :PrimaryContribution ;
+          :agent <tr5757qc3zhq910#it> ] ;
+      :genreForm <https://id.kb.se/marc/GovernmentPublicationType-1> ;
+      :language <https://id.kb.se/language/swe> ;
+      :subject <https://id.kb.se/term/sao/Sverige> ] ;
+
+  :otherPhysicalFormat [ a :Instance ;
+      :describedBy [ a :Record ;
+          :controlNumber "2236400" ] ;
+      :hasTitle [ a :Title ;
+          :mainTitle "Vattendragsutredningens förslag till vattendrag som bör skyddas enligt naturresurslagen (NRL)" ] ;
+      marc:displayText "Originalversion" ] ;
+
+  :projection <https://id.kb.se/marc/MapsProjectionType-o> ;
+
+  :classification [ a :Classification ;
+      :code "Ubbbd-c/K" ;
+      :inScheme [ a :ConceptScheme ;
+          :code "kssb" ;
+          :sameAs <https://id.kb.se/term/kssb%2F6/> ;
+          :version "6" ] ] ,
+    [ a :Classification ;
+      :code "Uh-c/K" ;
+      :inScheme [ a :ConceptScheme ;
+          :code "kssb" ;
+          :sameAs <https://id.kb.se/term/kssb%2F6/> ;
+          :version "6" ] ] ;
+
+  :extent [ a :Extent ; :label "1 karta" ] ;
+  :hasDimensions [ a :Dimensions ; :label "61 x 26 cm" ] ;
+  :physicalDetailsNote "färg" ;
+  :tableOfContents [ a :TableOfContents ;
+      :label "Med förteckningar över skyddsvärda vattendrag" ] ;
+
+  :manufacture [ a :Manufacture ;
+      :agent [ a :Agent ;
+          :label "Sjöfartsverkets tr." ] ;
+      :place [ a :Place ;
+          :label "[Norrköping]" ] ] ;
+
+  :production [ a :Reproduction ;
+      :agent [ a :Agent ;
+          :label "Kungliga biblioteket" ] ;
+      :date "2015" ;
+      :place [ a :Place ;
+          :label "Stockholm" ] ;
+      :typeNote "Digitalt faksimil och elektronisk text" ] ;
+
+  :publication [ a :PrimaryPublication ;
+      :agent [ a :Agent ;
+          :label "[Fritze]" ] ;
+      :country <https://id.kb.se/country/sw> ;
+      :place [ a :Place ;
+          :label "[Stockholm]" ] ;
+      :year "1996" ] ;
+
+  :hasNote [ a :Note ;
+      :label "Bil. till: Omtankar om vattendrag, ISBN 91-38-20401-0 (Statens offentliga utredningar, ISSN 0375-250X; 1996:155)" ] ;
+  :relationship [ a :Relationship ;
+      :entity [ a :Work ;
+          :hasTitle [ a :Title ;
+              :mainTitle "Omtankar om vattendrag" ] ] ] ;
+
+  :seriesMembership [ a :SeriesMembership ;
+      :inSeries [ a :Instance ;
+          :identifiedBy [ a :ISSN ;
+              :value "0375-250X" ] ;
+          :instanceOf <gdsvzrv0094grdt#it> ] ;
+      marc:filingOfSeriesenumeration "1996" ,
+        "155" ;
+      :seriesEnumeration "1996:155" ] ;
+
+  :isPrimaryTopicOf [ a :Document ;
+      :cataloguersNote "digipic" ;
+      marc:publicNote "Titelsida" ;
+      :uri "http://weburn.kb.se/tumnaglar/22/000651322,1,i,1.jpg" ] ;
+
+  :associatedMedia [ a :MediaObject ;
+      marc:publicNote "Fritt tillgänglig via Kungl. biblioteket" ;
+      :uri "http://urn.kb.se/resolve?urn=urn:nbn:se:kb:sou-2236400" ] ;
+
+  :indirectlyIdentifiedBy [ a :ISBN ; :qualifier "inkl. text) ; (print" ; :value "" ] ;
+
+  :meta <p71b9cw139dx631> .
+
+`)
+  const ref = id => ( { ['@id']: id } )
+
+  const print = 'btm92gjn5q8pkjx#it'
+  const electronic = 'p71b9cw139dx631#it'
+  const work = 'work1#it'
+
+  steps.display('Extrahera verket till ny post')
+  steps.extractAsLink(print, 'instanceOf', work)
+
+  steps.display('Länka matchat verk från faksimilen')
+  steps.replace(electronic, 'instanceOf', ref(work))
+
+  steps.display('Länka matchat tryck från faksimilen')
+  steps.replace(electronic, 'otherPhysicalFormat', ref(print), 'reproductionOf')
+  steps.display('... och vice versa')
+  steps.replace(print, 'otherPhysicalFormat', ref(electronic), 'hasReproduction')
+
+
+  steps.display('Ta bort tryck-värden från faksimilen', {incomplete: true})
+  steps.drop(electronic, 'extent')
+  steps.drop(electronic, 'hasDimensions')
+  steps.drop(electronic, 'physicalDetailsNote')
+  steps.drop(electronic, 'tableOfContents')
+  steps.drop(electronic, 'manufacture')
+  steps.drop(electronic, 'publication')
+  steps.complete().drop(electronic, 'indirectlyIdentifiedBy')
+
+  steps.display('Ta bort klassifikation från faksimilen')
+  steps.drop(electronic, 'classification')
+
+  steps.display('Ta bort tryck-relationer från faksimilen', {incomplete: true})
+  steps.drop(electronic, 'hasNote')
+  steps.drop(electronic, 'relationship')
+  steps.complete().drop(electronic, 'seriesMembership')
+
+  steps.display('Typa trycket')
+  steps.replace(print, '@type', 'Print')
+
+  steps.display('Ta bort klamrad undertitel', {
+    incomplete: true,
+    note: 'Denna är redundant då "Sverige" är länkat från verket samt pålagt som ämnesord'
+  })
+  void [print, electronic].forEach(it => {
+    if (it === electronic) steps.complete()
+    steps.drop(it, ['hasTitle', 'titleRemainder'])
+  })
+
+  steps.display('Ta bort mediaterm', { incomplete: true })
+  void [print, electronic].forEach(it => {
+    if (it === electronic) steps.complete()
+    steps.drop(it, 'marc:mediaTerm')
+  })
+
+  steps.display('Ta bort gammal form på serieenumeration')
+  steps.drop(print, ['seriesMembership', 'marc:filingOfSeriesenumeration'])
+
+  steps.display('Gör om anteckning och relation', {
+    incomplete: true,
+    note: 'Anteckningen anger att detta är en bilaga'
+  })
+  //steps.move(print, 'hasNote', print, ['relationship', 'hasNote'])
+  steps.move(print, ['hasNote', 'label'], print, ['relationship', 'comment'])
+  steps.complete().drop(print, 'hasNote')
+  /*
+  steps.move(print, ['relationship', 'entity'], print, 'supplementaryContent')
+  steps.complete().drop(print, 'relationship')
+  steps.complete().drop(print, 'hasNote')
+  */
+
+  // TODO: see separate classification cleanup in link-sab.html
+
+</script>
