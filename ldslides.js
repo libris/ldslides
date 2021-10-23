@@ -4,6 +4,9 @@ import { renderArrows } from '//niklasl.github.io/ldtr/demo/arrows.js'
 
 import { CONTEXT, GRAPH, ID, TYPE, VALUE, LANGUAGE, LIST } from '//niklasl.github.io/ldtr/lib/jsonld/keywords.js'
 
+const PLAY_SYMBOL = '\u25B6'
+const BACK_SYMBOL = '\u25C0\u25C0'
+
 export class Steps {
   constructor (window) {
     this.steps = []
@@ -27,7 +30,7 @@ export class Steps {
       this.doc.body.appendChild(this.viewDiv)
 
       this.nextBtn = this.doc.createElement('button')
-      this.nextBtn.innerText = '>'
+      this.nextBtn.innerText = PLAY_SYMBOL
       this.nextBtn.addEventListener('click', evt => {
         this.nextStep()
       })
@@ -46,12 +49,12 @@ export class Steps {
       this.data = []
       this.viewDiv.innerHTML = ''
       this.displayDiv.innerHTML = ''
-      this.nextBtn.innerText = '>'
+      this.nextBtn.innerText = PLAY_SYMBOL
       this.nextStep()
     } else if (this.i >= this.steps.length) {
       this.redraw()
       this.done = true
-      this.nextBtn.innerText = '<<'
+      this.nextBtn.innerText = BACK_SYMBOL
       this.nextBtn.blur()
     } else {
       this.steps[this.i++]()

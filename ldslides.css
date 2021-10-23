@@ -99,7 +99,21 @@ div.note.showing {
 
 button {
   position: fixed;
-  bottom: 2.5em;
-  right: 2.5em;
+  bottom: 1.2em;
+  right: 1.2em;
   z-index: 100;
+  width: 3em;
+  height: 3em;
+  border: none;
+  background-color: #eee;
+  outline: 1pt solid #aaa;
+  border-radius: 50%;
+  box-shadow: 1px 1px 1px #444;
+  font-size: 1.2em;
+  color: #666;
+  text-shadow: 1px 1px 1px #444;
+  font-weight: bold;
+}
+button:focus {
+  box-shadow: 1px 1px 3px #111;
 }
