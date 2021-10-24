@@ -7,6 +7,7 @@ body {
   font-size: 0.75vw;
   margin: 0;
   padding: 0;
+  background-color: #dce4dd;
 }
 
 section {
@@ -23,19 +24,28 @@ article.card .card p {
 }
 
 article.card {
+  background-color: rgb(253, 255, 254);
   min-width: auto;
   max-width: auto;
   width: 32em;
   float: left;
-  overflow: auto;
+  overflow: visible;
 }
 
 article.card.graph article.card {
   width: 30em;
 }
 
+article.card.selected {
+  background-color: #fefeee;
+}
+
 article.card.target {
-  background-color: rgba(200, 242, 255, 0.8);
+  background-color: rgba(224, 255, 255, 0.8);
+}
+
+article.card.graph {
+  background-color: rgba(236, 244, 237, 0.8);
 }
 
 path.arrow {
@@ -54,7 +64,7 @@ path.arrow.rev {
 span.arrow.rev { visibility: hidden; }
 
 div.display {
-  background-color: #fafafa;
+  background-color: #ecf4ed;
   width: 24em;
   position: fixed;
   top: 0.5em;
@@ -81,7 +91,7 @@ p.complete:hover {
 }
 
 div.note {
-  background-color: #fefeee;
+  background-color: #fffadf;
   width: 21em;
   padding: 0.5em;
   position: fixed;
