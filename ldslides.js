@@ -297,6 +297,11 @@ function checkInDirection (itemElement, dir, checked) {
 
 function add (graph, to, p, o, aslist = false) {
   for (let item of graph) {
+    if (GRAPH in item) {
+      if (add(item[GRAPH], to, p, o, aslist)) {
+        return true
+      }
+    }
     if (item[ID] === to) {
       let { owner, key, object } = find(item, p)
       if (aslist) {
@@ -311,9 +316,10 @@ function add (graph, to, p, o, aslist = false) {
       } else {
         owner[key] = o
       }
-      break
+      return true
     }
   }
+  return false
 }
 
 function replace (graph, from, p, repl = null, p2 = null) {
