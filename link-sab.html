@@ -93,13 +93,34 @@
 <SAB> {
     <https://id.kb.se/term/kssb/6> a :ConceptScheme; :code "kssb"; :version "6" .
 
-    <https://id.kb.se/term/kssb/6/-c> a :Classification ; :code "-c"; :prefLabel "Sverige"@sv .
-    <https://id.kb.se/term/kssb/6/media/K> a :Classification ; :code "/K"; :prefLabel "Kartor in plano"@sv .
+    #<https://id.kb.se/term/kssb/6/U> a :Classification ;
+    #  :code "U"; :prefLabel "Naturvetenskap"@sv .
 
-    <https://id.kb.se/term/kssb/6/Ubbbd> a :Classification ; :code "Ubbbd"; :prefLabel "Floder, älvar, åar"@sv .
-    <https://id.kb.se/term/kssb/6/Uh> a :Classification ; :code "Uh"; :prefLabel "Miljöfrågor och naturskydd"@sv .
-}
-  `)
+    #<https://id.kb.se/term/kssb/6/Ub> a :Classification ;
+    #  :broader <https://id.kb.se/term/kssb/6/U> ;
+    #  :code "Ub"; :prefLabel "Geofysik"@sv .
+
+    #<https://id.kb.se/term/kssb/6/Ubb> a :Classification ;
+    #  :broader <https://id.kb.se/term/kssb/6/Ub> ;
+    #  :code "Ubb"; :prefLabel "Oceanografi och hydrologi"@sv .
+
+    #<https://id.kb.se/term/kssb/6/Ubbb> a :Classification ;
+    #  :broader <https://id.kb.se/term/kssb/6/Ubb> ;
+    #  :code "Ubbb"; :prefLabel "Hydrologi"@sv .
+
+    <https://id.kb.se/term/kssb/6/Ubbbd> a :Classification ;
+      :broader <https://id.kb.se/term/kssb/6/Ubbb> ;
+      :code "Ubbbd"; :prefLabel "Floder, älvar, åar"@sv .
+
+    <https://id.kb.se/term/kssb/6/Uh> a :Classification ;
+      :broader <https://id.kb.se/term/kssb/6/U> ;
+      :code "Uh"; :prefLabel "Miljöfrågor och naturskydd"@sv .
+
+    <https://id.kb.se/term/kssb/6/-c> a :GeographicElement ; :code "-c"; :prefLabel "Sverige"@sv .
+
+    <https://id.kb.se/term/kssb/6/media/K> a :MediaElement ; :code "/K"; :prefLabel "Kartor in plano"@sv .
+
+} `)
 
   steps.display('Länka scheme', {incomplete: true})
   steps.replace(print, ['classification', 0, 'inScheme'], sabref)
@@ -107,7 +128,7 @@
   steps.replace(work, ['classification', 0, 'inScheme'], sabref)
   steps.complete().replace(work, ['classification', 1, 'inScheme'], sabref)
 
-  steps.display('"Prekoordinera" koder', {incomplete: true})
+  const sab = 'https://id.kb.se/term/kssb/6'
   const dash_c = 'https://id.kb.se/term/kssb/6/-c'
   const media_k = 'https://id.kb.se/term/kssb/6/media/K'
 
@@ -117,10 +138,12 @@
   const uh = 'https://id.kb.se/term/kssb/6/Uh'
   const uh_c = `${uh}-c`
 
+  steps.display('"Prekoordinera" koder', {incomplete: true})
+
   steps.extractAsLink(work, ['classification', 0], uddb_c)
   steps.complete().extractAsLink(work, ['classification', 1], uh_c)
 
-  steps.display('Länka kod-betydelser', {incomplete: true})
+  steps.display('Ersätt koder med länkar', {incomplete: true})
   //steps.add(uddb_c, 'broader', [ref(uddb), ref(dash_c)])
   //steps.add(uh_c, 'broader', [ref(uh), ref(dash_c)])
   steps.replace(uddb_c, 'code', [ref(uddb), ref(dash_c)], 'termComponentList')
@@ -128,5 +151,39 @@
 
   steps.replace(print, ['classification', 0, 'code'], [ref(uddb_c), ref(media_k)], 'termComponentList')
   steps.complete().replace(print, ['classification', 1, 'code'], [ref(uh_c), ref(media_k)], 'termComponentList')
+
+  const sao = 'https://id.kb.se/term/sao'
+  const maps = 'https://id.kb.se/term/gmgpc/swe/Kartor'
+
+  // Här börjar den *reducerande* normaliseringen...
+  steps.display('Visa SAO + GMGPC (referenser)')
+  steps.create(`
+  <SAO> {
+    <https://id.kb.se/term/sao/Sverige> a :Topic ; :prefLabel "Sverige"@sv .
+    <https://id.kb.se/term/sao/Vattendrag> a :Topic ; :prefLabel "Vattendrag"@sv .
+    <https://id.kb.se/term/sao/Milj%C3%B6fr%C3%A5gor> a :Topic ; :prefLabel "Miljöfrågor"@sv .
+    <https://id.kb.se/term/sao/Naturv%C3%A5rd> a :Topic ; :prefLabel "Naturvård"@sv .
+    <https://id.kb.se/term/gmgpc/swe/Kartor> a :GenreForm ; :prefLabel "Kartor"@sv .
+  } `)
+  steps.display('Matcha termer med SAB...', {incomplete: true})
+  steps.add(`${sao}/Sverige`, 'exactMatch', ref(dash_c))
+  steps.add(`${sao}/Vattendrag`, 'narrowMatch', ref(uddb))
+  steps.add(`${sao}/Milj%C3%B6fr%C3%A5gor`, 'broadMatch', ref(uh))
+  steps.add(`${sao}/Naturv%C3%A5rd`, 'broadMatch', ref(uh))
+  steps.complete().add(maps, 'narrowMatch', ref(media_k))
+
+  steps.display('Lägg på ämnesord', {incomplete: true})
+  steps.add(work, 'subject', ref(`${sao}/Sverige`)) // already present (just showing link)
+  steps.add(work, 'subject', ref(`${sao}/Vattendrag`), true)
+  steps.add(work, 'subject', ref(`${sao}/Milj%C3%B6fr%C3%A5gor`), true)
+  steps.complete().add(work, 'subject', ref(`${sao}/Naturv%C3%A5rd`), true)
+
+  steps.display('Lägg på genre/form på instansen')
+  steps.add(print, 'genreForm', ref(maps))
+  steps.display('Ta bort klassifikation från instansen', {note: 'Vad "Kartor in plano" tillför på en kartografisk resurs bör diskuteras (här anses en genre/form-term tillräcklig'})
+  steps.drop(print, 'classification')
+
+  steps.display('Ta bort <em>all</em> klassifikation', {note: 'Givet att en automatisk metod för att följa länkarna och pussla ihop SAB-koden finns på plats.'})
+  steps.drop(work, 'classification')
 
 </script>
