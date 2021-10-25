@@ -178,9 +178,9 @@
   steps.add(work, 'subject', ref(`${sao}/Milj%C3%B6fr%C3%A5gor`), true)
   steps.complete().add(work, 'subject', ref(`${sao}/Naturv%C3%A5rd`), true)
 
-  steps.display('Lägg på genre/form på instansen')
-  steps.add(print, 'genreForm', ref(maps))
-  steps.display('Ta bort klassifikation från instansen', {note: 'Vad "Kartor in plano" tillför på en kartografisk resurs bör diskuteras (här anses en genre/form-term tillräcklig'})
+  steps.display('Gör om media-term till genre/form på trycket')
+  steps.replace(print, 'marc:mediaTerm', ref(maps), 'genreForm')
+  steps.display('Ta bort klassifikation från trycket', {note: 'Vad "Kartor in plano" tillför på en kartografisk resurs bör diskuteras (här anses en genre/form-term tillräcklig)'})
   steps.drop(print, 'classification')
 
   steps.display('Ta bort <em>all</em> klassifikation', {note: 'Givet att en automatisk metod för att följa länkarna och pussla ihop SAB-koden finns på plats.'})
