@@ -1,22 +1,20 @@
 <!DOCTYPE html>
-<title>Work 1 : LDSLide</title>
+<title>Work 1 : LD Slides</title>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="ldslides.css" />
 <script type="module">
   import {Steps} from './ldslides.js'
 
+  const ref = id => ( { ['@id']: id } )
+
   let steps = new Steps(window)
 
   steps.load(`
-<instance-1> a :Print ;
-  :extent [ a :Extent ;
-      :label "102, [1] s." ] ;
-  :hasDimensions [ a :Dimensions ;
-      :label "25 cm" ] ;
-  :hasNote [ a :Note ;
-      :label "Även tillg. med tryckår: 2. uppl., 1996" ] ;
+<fxql7jqr38b1dkf#it> a :Print ;
+  :issuanceType :Monograph ;
   :hasTitle [ a :Title ;
       :mainTitle "Anteckningar från en ö" ] ;
+  :responsibilityStatement "Tove Jansson, Tuulikki Pietilä" ;
   :identifiedBy [ a :ISBN ;
       :acquisitionTerms "310:00" ;
       :qualifier "INB." ;
@@ -41,7 +39,7 @@
         [ a :Classification ;
           :code "Lz" ] ;
       :contribution [ a :PrimaryContribution ;
-          :agent <https://libris.kb.se/wt79bh6f2j46dtr#it> ] ,
+          :agent <wt79bh6f2j46dtr#it> ] ,
         [ a :Contribution ;
           :agent [ a :Person ;
               :familyName "Pietilä" ;
@@ -50,16 +48,14 @@
       :genreForm <https://id.kb.se/marc/NotFictionNotFurtherSpecified> ,
         <https://id.kb.se/marc/Autobiography> ;
       :language <https://id.kb.se/language/swe> ;
-      :subject <https://libris.kb.se/wt79bh6f2j46dtr#it> ,
+      :subject <wt79bh6f2j46dtr#it> ,
         [ a :Person ;
           :familyName "Pietilä" ;
           :givenName "Tuulikki" ;
           :lifeSpan "1917-2009" ] ] ;
-  :issuanceType :Monograph ;
   :manufacture [ a :Manufacture ;
       :place [ a :Place ;
           :label "Finland" ] ] ;
-  :physicalDetailsNote "ill." ;
   :publication [ a :PrimaryPublication ;
       :agent [ a :Agent ;
           :label "Bonnier" ] ;
@@ -67,40 +63,97 @@
       :place [ a :Place ;
           :label "Stockholm" ] ;
       :year "1996" ] ;
-  :responsibilityStatement "Tove Jansson, Tuulikki Pietilä" ;
+  :physicalDetailsNote "ill." ;
+  :extent [ a :Extent ;
+      :label "102, [1] s." ] ;
+  :hasDimensions [ a :Dimensions ;
+      :label "25 cm" ] ;
+  :hasNote [ a :Note ;
+      :label "Även tillg. med tryckår: 2. uppl., 1996" ] ;
   :sameAs <http://libris.kb.se/resource/bib/7149593> .
 `)
 
+  const work = 'work1#it'
+  const inst = 'fxql7jqr38b1dkf#it'
+
   steps.display('Extrahera verket till ny post')
-  steps.extractAsLink('instance-1', 'instanceOf', 'work-1')
+  steps.extractAsLink(inst, 'instanceOf', work)
 
-  steps.display('Länka klassifikationsschema')
-  steps.extractAsLink('work-1', ['classification', 1, 'inScheme'], 'sch-1')
-  steps.display('Länka matchande schema')
-  steps.replace('work-1', ['classification', 2, 'inScheme'], {['@id']: 'sch-1'})
-
-  steps.display('Länka 4 klassifikationer', {incomplete: true})
-  steps.extractAsLink('work-1', ['classification', 1], 'cls-2')
-  steps.extractAsLink('work-1', ['classification', 2], 'cls-3')
-  steps.extractAsLink('work-1', ['classification', 3], 'cls-4')
-  steps.complete().extractAsLink('work-1', ['classification', 0], 'cls-1')
-  steps.display('Komplettera schemalänk')
-  steps.add('cls-4', 'inScheme', {'@id': 'sch-1'})
+  steps.display('Visa Tove Jansson (referens)')
+  steps.create(`
+    <wt79bh6f2j46dtr#it> a :Person ;
+      :familyName "Jansson" ;
+      :givenName "Tove" ;
+      :identifiedBy [ a :ISNI ;
+          :value "0000000121478925" ] ;
+      :closeMatch [ a :ClassificationDdc ;
+          :code "839.7374" ;
+          :edition "23/swe" ] ;
+      :exactMatch <http://www.wikidata.org/entity/Q102071> ;
+      :lifeSpan "1914-2001" .
+  `)
 
   steps.display('Extrahera andra bidragande aktör')
-  steps.extractAsLink('work-1', ['contribution', 1, 'agent'], 'agent-2')
+  steps.extractAsLink(work, ['contribution', 1, 'agent'], 'agent-2')
   steps.display('Länka aktör som ämne')
-  steps.replace('work-1', ['subject', 1], {['@id']: 'agent-2'})
+  steps.replace(work, ['subject', 1], ref('agent-2'))
 
-  steps.display('Lägg till författarroll')
-  steps.add('work-1', ['contribution', 0, 'role'], {'@id': 'aut'})
-  steps.display('Lägg till illustratörsroll')
-  steps.add('work-1', ['contribution', 1, 'role'], {'@id': 'ill'})
+  steps.display('Lägg till roller', {incomplete: true})
+  steps.add(work, ['contribution', 0, 'role'], ref('aut'))
+  steps.complete().add(work, ['contribution', 1, 'role'], ref('ill'))
 
   steps.display('Ta bort illustrationsdetalj')
-  steps.drop('instance-1', 'physicalDetailsNote')
+  steps.drop(inst, 'physicalDetailsNote')
 
-  steps.display('Kopiera titeln till verket?')
-  steps.copy('instance-1', 'hasTitle', 'work-1')
+  steps.display('Kopiera titeln till verket') // ...
+  steps.copy(inst, 'hasTitle', work)
+
+  steps.display('Visa SAB (för referens)')
+  steps.create(`
+    <SAB> {
+
+      <https://id.kb.se/term/kssb/6> a :ConceptScheme; :code "kssb"; :version "6" .
+
+      <https://id.kb.se/term/kssb/6/Gcd> a :Classification ;
+        :code "Gcd" ;
+        :prefLabel "Finlandssvensk litteraturhistoria" ;
+        :inCollection <https://id.kb.se/term/kssb/6/Gbn--Gd> .
+
+      <https://id.kb.se/term/kssb/6/Gz> a :Classification ;
+        :code "Gz" ;
+        :prefLabel "Särskilda utländska författare" .
+
+      <https://id.kb.se/term/kssb/6/Ibz> a :Classification ;
+        :code "Ibz" ;
+        :prefLabel "Särskilda konstnärer" .
+
+      <https://id.kb.se/term/kssb/6/Lz> a :Classification ;
+        :code "Lz" ;
+        :prefLabel "Särskilda personer" .
+
+  } `)
+
+  const tovej = 'wt79bh6f2j46dtr#it'
+  const tovejddc = '839.7374'
+
+  const sab = 'https://id.kb.se/term/kssb/6'
+
+  steps.display('Länka klassifikationsschema', {incomplete: true})
+  steps.replace(work, ['classification', 1, 'inScheme'], ref(sab))
+  steps.replace(work, ['classification', 2, 'inScheme'], ref(sab))
+  steps.complete().add(work, ['classification', 3, 'inScheme'], ref(sab))
+
+  steps.display('Länka klassifikation')
+  steps.replace(work, ['classification', 3], ref(`${sab}/Lz`))
+
+  steps.display('Komplettera koder med länkar i 2 klassifikationer', {incomplete: true})
+  steps.add(work, ['classification', 1, 'termComponentList'], [ref(`${sab}/Gcd`), ref(`${sab}/Gz`), ref(tovej)])
+  steps.complete().add(work, ['classification', 2, 'termComponentList'], [ref(`${sab}/Ibz`), ref('agent-2')])
+
+  steps.display('Extrahera DDC', {note: 'Här vore det lämpligt att länka till dewey.info...'})
+  steps.extractAsLink(work, ['classification', 0], tovejddc)
+
+  steps.display('Notera matchingen för Tove Jansson och länka den')
+  steps.replace(tovej, 'closeMatch', ref(tovejddc))
 
 </script>
