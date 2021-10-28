@@ -37,6 +37,15 @@ export class Steps {
       this.doc.body.appendChild(this.nextBtn)
       this.nextBtn.focus()
       this.nextStep()
+
+      // TODO: add btm-rght button (show on hover) with showTurtle in textarea?
+      window.dumpTurtle = async () => {
+        const serializer = await import('//niklasl.github.io/ldtr/lib/trig/serializer.js')
+        let chunks = []
+        serializer.serialize(steps.data, {write (chunk) {chunks.push(chunk)}})
+        console.log(chunks.join(''))
+      }
+
     }
   }
 
@@ -159,7 +168,7 @@ export class Steps {
     return true
   }
 
-  highlight(o, target=false) {
+  highlight (o, target=false) {
     if (o != null && typeof o == 'object') {
       for (o of Array.isArray(o) ? o : [o]) {
         if (ID in o) {
@@ -262,8 +271,35 @@ export class Steps {
       let dropped = replace(this.data[GRAPH], from, p)
       add(this.data[GRAPH], to, p2, dropped)
       this.redraw()
-      this.highlight({[ID]: to})
+      if (Array.isArray(p2) && p2[p2.length - 1] === ID) {
+        this.highlight({[ID]: dropped}, true)
+      } else {
+        this.highlight({[ID]: to})
+      }
     })
+  }
+
+  rename (s, p, p2) {
+    this.steps.push(async () => {
+      const item = lookup(this.data[GRAPH], s)
+      let { owner, key, object } = find(item, p)
+      replace(this.data[GRAPH], s, p, object, p2)
+      this.redraw()
+    })
+  }
+}
+
+function lookup (graph, id) {
+  for (const item of graph) {
+    if (GRAPH in item) {
+      const nested = lookup(item[GRAPH], id)
+      if (nested != null) {
+        return nested
+      }
+    }
+    if (item[ID] === id) {
+      return item
+    }
   }
 }
 
@@ -296,65 +332,55 @@ function checkInDirection (itemElement, dir, checked) {
 }
 
 function add (graph, to, p, o, aslist = false) {
-  for (let item of graph) {
-    if (GRAPH in item) {
-      if (add(item[GRAPH], to, p, o, aslist)) {
-        return true
-      }
-    }
-    if (item[ID] === to) {
-      let { owner, key, object } = find(item, p)
-      if (aslist) {
-        if (owner[key] == null) {
-          owner[key] = []
-        } else if (!Array.isArray(owner[key])) {
-          owner[key] = [ owner[key] ]
-        }
-      }
-      if (Array.isArray(owner[key])) {
-        owner[key].push(o)
-      } else {
-        owner[key] = o
-      }
-      return true
+  const item = lookup(graph, to)
+  let { owner, key, object } = find(item, p)
+  if (aslist) {
+    if (owner[key] == null) {
+      owner[key] = []
+    } else if (!Array.isArray(owner[key])) {
+      owner[key] = [ owner[key] ]
     }
   }
-  return false
+  if (Array.isArray(owner[key])) {
+    owner[key].push(o)
+  } else {
+    owner[key] = o
+  }
 }
 
 function replace (graph, from, p, repl = null, p2 = null) {
   let dropped
-  for (const item of graph) {
-    if (item[ID] === from) {
-      let { owner, key, object } = find(item, p)
-      if (typeof key === 'string') {
-        if (repl == null) {
-          dropped = owner[key]
-          delete owner[key]
-        } else {
-          if (p2) {
-            const entries = Object.entries(owner)
-            for (let k in owner) delete owner[k]
-            for (let [k, v] of entries) {
-              if (k === key) {
-                owner[p2] = repl
-              } else {
-                owner[k] = v
-              }
-            }
+  const item = lookup(graph, from)
+  let { owner, key, object } = find(item, p)
+  if (typeof key === 'string') {
+    if (repl == null) {
+      dropped = owner[key]
+      delete owner[key]
+    } else {
+      if (p2) {
+        const entries = Object.entries(owner)
+        for (let k in owner) delete owner[k]
+        for (let [k, v] of entries) {
+          if (k === key) {
+            owner[p2] = repl
           } else {
-            owner[key] = repl
+            owner[k] = v
           }
         }
       } else {
-        if (repl == null) {
-          dropped = owner.splice(key, 1)
-        } else {
-          owner.splice(key, 1, repl)
-        }
+        owner[key] = repl
       }
-      break
+    }
+  } else {
+    if (repl == null) {
+      dropped = owner.splice(key, 1)
+    } else {
+      owner.splice(key, 1, repl)
     }
   }
   return dropped
+}
+
+export function ref (id) {
+  return { ['@id']: id }
 }

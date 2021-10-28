@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<title>Linking media objects 1 : LD Slides</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="ldslides.css" />
+<script type="module">
+  import {Steps, ref} from './ldslides.js'
+
+  const steps = new Steps(window)
+
+  const print = 'print-1'
+  const electro1 = 'electronic-1'
+  const item1 = 'electronic-1-item-1'
+  const library = 'https://libris.kb.se/library/S'
+  const freelyavailable = 'https://id.kb.se/policy/freelyavailable'
+  const pdf1 = 'https://data.kb.se/electronic-1/pdf'
+  const thumbnail1 = 'https://data.kb.se/electronic-1/thumbnail-500x800.jpg'
+
+  steps.load(`
+<${electro1}> a :Electronic ;
+  :issuanceType :Monograph ;
+  :carrierType <https://id.kb.se/term/rda/OnlineResource> ;
+  :instanceOf <work-1> ;
+  :reproductionOf <print-1> ;
+  :meta [ :bibliography <https://libris.kb.se/library/DIGI> ] ;
+
+  :associatedMedia [ a :MediaObject ;
+              :uri "${pdf1}" ] .
+
+<${item1}> a :Item ;
+  :itemOf <${electro1}> ;
+  :heldBy <${library}> ;
+  :electronicLocator [ a :Document ; :uri "${pdf1}" ] .
+`)
+
+  steps.display('Visa licenser (för referens)')
+  steps.create(`
+  <https://id.kb.se/policy/> {
+    <${freelyavailable}> a :AccessPolicy ;
+      :label "Fritt tillgänglig"@sv, "Freely available"@en .
+  } `)
+
+  steps.display('Visa kända digitala objekt')
+  steps.create(`
+  <https://data.kb.se/> {
+    <${pdf1}> a :File .
+    <${thumbnail1}> a :File . 
+  } `)
+
+
+  steps.display('Länka mediaobjekt')
+  steps.move(electro1, ['associatedMedia', 'uri'], electro1, ['associatedMedia', '@id'])
+
+  steps.display('Länka digitalt objekt från beståndsexemplar')
+  steps.move(item1, ['electronicLocator', 'uri'], item1, ['electronicLocator', '@id'])
+
+  steps.display('Precisera länken till filen', {note: 'Här vet vi mer än att det bara är "någon slags tillhörande media"; då kan vi precisera det. Men hur precist? Är det "bara" electronicLocator?'})
+  steps.move(electro1, 'associatedMedia', electro1, 'electronicLocator')
+  steps.display('Eller hasRepresentation?')
+  steps.move(electro1, 'electronicLocator', electro1, 'hasRepresentation')
+  steps.display('Och är även item.electronicLocator egentligen en hasRepresentation?')
+  steps.move(item1, 'electronicLocator', item1, 'hasRepresentation')
+  steps.display('Exemplaret räcker, ta bort hasRepresentation från instansen?', {note: 'Hur konsoliderar vi itemOf/hasItem med representationOf/hasRepresentation? Är itemOf en subPropertyOf representationOf? (Och Item subClassOf Representation?)'})
+  steps.drop(electro1, 'hasRepresentation')
+
+  steps.display('Länka licens från elektronisk resurs', {note: 'Länka mediaobjekten? Jmf. frågan om open-access.'})
+  steps.add(electro1, 'usageAndAccessPolicy', {'@id': freelyavailable})
+  steps.display('Eller från exemplaret?')
+  steps.move(electro1, 'usageAndAccessPolicy', item1)
+  //steps.display('Eller från filen?') // Nope, too far (put on "landing page of publisher")
+  //steps.complete().move(item1, 'usageAndAccessPolicy', pdf1)
+
+  /*
+  https://libris-qa.kb.se/bppxr2m980hqhdds (enkel faksimil + alvin-landningssida)
+  steps.display('Länka landningssida', {note: 'På instansen eller representationen?'})
+  steps.add(electro1, 'accessUrl', {'@id': thumbnail1}) // vs. accessUrl, downloadUrl
+  */
+
+  steps.display('Länka tumnagel', {note: 'På instansen eller representationen?'})
+  steps.add(pdf1, 'thumbnail', {'@id': thumbnail1})
+  steps.display('Ange att detta är en titelsida', {note: `Här börjar det bli förvirrat;
+    Bättre att ange :genreForm :TitlePage? (Men då är det en Page, d.v.s. en del av instansen; som *har* en tumnagel...)
+  `})
+  steps.add(thumbnail1, 'label', {'@value': "Titelsida", '@language': "sv"})
+
+  // Other variants
+  steps.display('Case 2: RFC med textfil')
+  steps.create(`
+<5k85jkxr3pvc60q1#it> a :Electronic ;
+  marc:versionOfResource [ a :Electronic ;
+      marc:publicNote "Annat format" ;
+      :uri "https://rfc-editor.org/rfc/rfc9004.txt" ] .
+`)
+const rfc1 = '5k85jkxr3pvc60q1#it'
+  steps.display('Case 2: länka och precisera koppling till textfil', {incomplete: true})
+steps.move(rfc1, 'marc:versionOfResource', rfc1, 'hasRepresentation')
+steps.complete().move(rfc1, ['hasRepresentation', 'uri'], rfc1, ['hasRepresentation', '@id'])
+
+  /*
+  # Kodningsformat PDF + Fulltext
+  URL=https://libris-qa.kb.se/4j7052ng2jvbh1nt#it
+
+  # Kodningsformat PDF + Fulltext, fritt tillgänglig via internet
+  URL=https://libris-qa.kb.se/t621l4k9rzwpzv39
+
+  curl -s -L -HAccept:application/ld+json "$URL?embellished=false" | ldtr -tjsonld -ottl
+  */
+
+  // https://libris-qa.kb.se/katalogisering/search/libris?q=*&_limit=20&@type=*&_sort=&exists-reproductionOf=true
+  steps.display('Övriga varianter')
+  steps.create(`
+# TODO: find real examples of these (ideally with "all" variants)
+
+<something-1#it> a :Electronic ;
+  :electronicLocator [ a :Document ;
+            :uri "http://www-spires.slac.stanford.edu/spires/find/hep?cnum=C96-05-30" ] .
+
+<something-2#it> a :Electronic ;
+  :electronicLocator [ a :Document ; :uri "ftp://example.com" ;
+          :contentSize "16874 bytes" ] .
+
+<something-3#it> a :Electronic ;
+  marc:versionOfResource [ a :Electronic ;
+            marc:publicNote "Tidskriftens webbplats" ;
+            :uri "http://www.vr.se/tvarsnitt" ] .
+
+<something-4#it> a :Instance ;
+  :isPrimaryTopicOf [ a :Document ;
+              :uri "http://example.org/review" ] .
+
+<something-5#it> a :Instance ;
+  :isPrimaryTopicOf [ a :Document ;
+      :uri "http://example.org/page" ] .
+
+<something-6#it> a :Instance ;
+  :associatedMedia [ a :MediaObject ;
+              :uri "http://www.framtidsstudier.se/filebank/files/20051201$133251$fil$048Ti3PL2UIwRJQEBbDG.pdf" ] .
+
+<something-7#it> a :Instance ;
+  :relatedTo [ a :Document ;
+              :uri "http://example.com/doc.pdf" ] .
+
+<something-8#it> a :Instance ;
+  :associatedMedia [ a :MediaObject ;
+              :uri "http://www.cdc.gov/ncidod/EID/eid.htm" ;
+              :encodingFormat <https://id.kb.se/encodingFormat/text/html> ] .
+`)
+
+
+</script>

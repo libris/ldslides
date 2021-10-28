@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<title>Ordna en digitaliserad tryckt bok : LD Slides</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="ldslides.css" />
+<script type="module">
+  import {Steps, ref} from './ldslides.js'
+
+  const steps = new Steps(window)
+
+  const print = '6j0q84dt440nq19m#it'
+  const work = 'work-1'
+  const electronic = 'kwc3n2slhsjnccl9#it'
+  const raraurl = 'http://urn.kb.se/resolve?urn=urn:nbn:se:umu:rara-1150'
+  const imageurl = 'https://digital.ub.umu.se/image_server_router/17a_000382/0002.jpg'
+
+  steps.load(`
+
+<${print}> a :Print ;
+  :issuanceType :Monograph ;
+  :mediaType <https://id.kb.se/term/rda/Unmediated> ;
+  :carrierType <https://id.kb.se/term/rda/Volume> ;
+  :hasTitle [ a :Title ;
+      :mainTitle "Vollkommen wiederhergestellte gründliche und zierliche Schön-Schreibe-Kunst nach richtigen Grundsätzen und Regeln aufrichtig erklärt von Michael Baurenfeind. Neue Auflage." ] ;
+  :instanceOf [ a :Text ;
+      :subject <https://id.kb.se/term/sao/Kalligrafi> ,
+        <https://id.kb.se/term/sao/Skrivkonst> ;
+      :language <https://id.kb.se/language/ger> ;
+      :genreForm <https://id.kb.se/marc/NotFictionNotFurtherSpecified> ;
+      :contentType <https://id.kb.se/term/rda/Text> ;
+      :contribution [ :role <https://id.kb.se/relator/author> ;
+          a :PrimaryContribution ;
+          :agent [ a :Person ;
+              :lifeSpan "1680-1753" ;
+              :givenName "Michael" ;
+              :familyName "Baurenfeind" ] ] ,
+        [ :role <https://id.kb.se/relator/printer> ;
+          a :Contribution ;
+          :agent [ :name "Weigel" ;
+              a :Organization ] ] ,
+        [ :role <https://id.kb.se/relator/printer> ;
+          a :Contribution ;
+          :agent [ :name "Schneider" ;
+              a :Organization ] ] ;
+      :classification [ :code "745.61" ;
+          a :ClassificationDdc ;
+          :edition "full" ;
+          :editionEnumeration "23/swe" ] ] ;
+  :publication [ :year "1795" ;
+      a :PrimaryPublication ;
+      :place [ a :Place ;
+          :label "Nürnberg, nei Adam Gottlieb Schneider und Weigel, Kaiserl. privil. Kunst- und Buchhändler, 1795." ] ;
+      :country <https://id.kb.se/country/gw> ] ;
+  marc:hasAddedEntryHierarchicalPlaceName [ a marc:AddedEntryHierarchicalPlaceName ;
+      marc:city "Nürnberg" ;
+      marc:countryOrLargerEntity "Tyskland" ] ;
+  :extent [ a :Extent ;
+      :label "[2] s., 3-6 sp., pl.-titelbl., [23] pl-bl." ] ;
+  :hasDimensions [ a :Dimensions ;
+      :label "2:o(tv.)" ] ;
+  :otherPhysicalFormat <kwc3n2slhsjnccl9#it> .
+
+
+<${electronic}> a :Electronic ;
+  :issuanceType :Monograph ;
+  :carrierType <https://id.kb.se/marc/Online> ,
+    <https://id.kb.se/marc/OnlineResource> ;
+  marc:mediaTerm "Elektronisk resurs" ;
+  :hasTitle [ a :Title ;
+      :mainTitle "Vollkommen wiederhergestellte gründliche und zierliche Schön-Schreibe-Kunst nach richtigen Grundsätzen und Regeln aufrichtig erklärt von Michael Baurenfeind. Neue Auflage." ] ;
+  :instanceOf [ a :Text ;
+      :subject <https://id.kb.se/term/sao/Kalligrafi> ,
+        <https://id.kb.se/term/sao/Skrivkonst> ;
+      :language <https://id.kb.se/language/ger> ;
+      :genreForm <https://id.kb.se/marc/NotFictionNotFurtherSpecified> ;
+      :contentType <https://id.kb.se/term/rda/Text> ;
+      :contribution [ :role <https://id.kb.se/relator/author> ;
+          a :PrimaryContribution ;
+          :agent [ a :Person ;
+              :lifeSpan "1680-1753" ;
+              :givenName "Michael" ;
+              :familyName "Baurenfeind" ] ] ,
+        [ :role <https://id.kb.se/relator/printer> ;
+          a :Contribution ;
+          :agent [ :name "Weigel" ;
+              a :Organization ] ] ,
+        [ :role <https://id.kb.se/relator/printer> ;
+          a :Contribution ;
+          :agent [ :name "Schneider" ;
+              a :Organization ] ] ;
+      :classification [ :code "745.61" ;
+          a :ClassificationDdc ;
+          :edition "full" ;
+          :editionEnumeration "23/swe" ] ] ;
+  :production [ :date "2020" ;
+      a :Reproduction ;
+      :agent [ a :Agent ;
+          :label "Umeå universitetsbibliotek" ] ;
+      :place [ a :Place ;
+          :label "Umeå" ] ;
+      :typeNote "Digitalt faksimil och elektronisk text. OCR." ] ;
+  :publication [ :year "1795" ;
+      a :PrimaryPublication ;
+      :place [ a :Place ;
+          :label "Nürnberg, nei Adam Gottlieb Schneider und Weigel, Kaiserl. privil. Kunst- und Buchhändler, 1795." ] ;
+      :country <https://id.kb.se/country/gw> ] ;
+  marc:hasAddedEntryHierarchicalPlaceName [ a marc:AddedEntryHierarchicalPlaceName ;
+      marc:city "Nürnberg" ;
+      marc:countryOrLargerEntity "Tyskland" ] ;
+  :reproductionOf <6j0q84dt440nq19m#it> ;
+  :extent [ a :Extent ;
+      :label "[2] s., 3-6 sp., pl.-titelbl., [23] pl-bl." ] ;
+  :hasDimensions [ a :Dimensions ;
+      :label "2:o(tv.)" ] ;
+  :associatedMedia [ :uri "${raraurl}" ;
+      a :MediaObject ;
+      marc:publicNote "Fritt tillgänglig via Umeå universitetsbibliotek" ] ;
+  :relatedTo [ :uri "${imageurl}" ;
+      a :Document ;
+      :appliesTo [ a :Resource ;
+          :label "Bild:" ] ;
+      :cataloguersNote "digipic" ] .
+
+  `)
+
+  steps.display('Rätta till utgivning från rest-fält', {incomplete: true})
+  steps.move(print, ['publication', 'place', 'label'], print, 'provisionActivityStatement')
+  //steps.move(print, ['marc:hasAddedEntryHierarchicalPlaceName', 'marc:ciry'], print, ['publication', 'place', 'label'])
+  steps.add(print, ['publication', 'place', 'label'], 'Nürnberg')
+  //steps.drop(print, ['marc:hasAddedEntryHierarchicalPlaceName', 'marc:countryOrLargerEntity'])
+  steps.complete().drop(print, 'marc:hasAddedEntryHierarchicalPlaceName')
+
+  steps.display('Extrahera verket', {note: 'Så att vi kan dela det med reproduktionen', incomplete: true})
+  steps.extractAsLink(print, 'instanceOf', work)
+  steps.complete().replace(electronic, 'instanceOf', ref(work))
+
+  steps.display('Ta bort omfång/dimensioner från reproduktionen', {incomplete: true})
+  steps.drop(electronic, 'extent')
+  steps.complete().drop(electronic, 'hasDimensions')
+  steps.display('Ta bort tryckets utgivning från reproduktionen', {incomplete: true})
+  steps.drop(electronic, 'publication')
+  steps.complete().drop(electronic, 'marc:hasAddedEntryHierarchicalPlaceName')
+
+  // TODO: koda:
+  // - "Digitalt faksimil och elektronisk text. OCR"
+  // - "Fritt tillgänglig via Umeå universitetsbibliotek"
+  // - "digipic"
+  //MediaObject
+  //  usageAndAccessPolicy: freelyavailable
+  //  provider (basepropertyof heldBy): <https://libris.kb.se/library/Q>
+
+  // TODO: var säger vi att det är OCR:ad text
+  // "Borde" ligga på Representation/File...
+  // - i DigitalReproduction-eventet? Kanske, med typ productionMethod? Annars bara digitalCharacteristic ...
+  // - eller i resultatet? (nja, det är väl OCR:at oavsett om det är altoxml eller .txt eller pdf...)
+
+  const freelyavailable = 'https://id.kb.se/policy/freelyavailable'
+  const umeålibrary = 'https://libris.kb.se/library/Q'
+
+  steps.display('Visa licenser och bibliotek (för referens)')
+  steps.create(`
+  <policies> {
+    <${freelyavailable}> a :AccessPolicy ;
+      :label "Fritt tillgänglig"@sv, "Freely available"@en .
+  }
+  <libraries> {
+    <${umeålibrary}> a :Library ;
+      :name "Umeå universitetsbibliotek" ;
+      :sigel "Q" ;
+      :url <https://www.umu.se/bibliotek/> .
+  } `)
+
+  steps.display('Länka Umeå universitetsbibliotek')
+  steps.add(electronic, ['production', 'agent'], {'@id': umeålibrary})
+
+
+  steps.display('Länka licens')
+  steps.add(electronic, 'usageAndAccessPolicy', {'@id': freelyavailable})
+
+  steps.display('Beskriv digitala objekt med egna URI:er')
+  steps.create(`
+  <${raraurl}> a :Document .
+  <${imageurl}> a :File .
+  `)
+
+  steps.display('Ange utgivare av mediasidan')
+  steps.add(raraurl, 'publisher', ref(umeålibrary))
+  steps.display('Flytta produktionstypnotering till mediasidan')
+  steps.move(electronic, ['production', 'typeNote'], raraurl, 'comment')
+
+  steps.display('Ta bort överflödig anteckning', {note: 'Licensen anger att det digitala är fritt tillgängligt, och URI:n går till Umeå universitetsbibliotek (här även angiven som utgivare av media-sidan, samt (relaterat men inte likvärdigt) angivet som agent produktion)'})
+  steps.drop(electronic, ['associatedMedia', 'marc:publicNote'])
+
+  steps.display('Länka mediaobjektet' /*och specificera relation'*/, {note: 'Detta är en landnningssida, så vi behåller associatedMedia snarare än anger electronicLocator? (Det är definitivt inte hasRepresentation då landningssidan är en indirektion dit.)'})
+  steps.move(electronic, ['associatedMedia', 'uri'], electronic, ['associatedMedia', '@id'])
+  //steps.complete().rename(electronic, 'associatedMedia', 'electronicLocator')
+
+  steps.display('Flytta katalogisatörsanteckning till bilden')
+  steps.move(electronic, ['relatedTo', 'cataloguersNote'], imageurl, 'comment')
+
+  steps.display('Länka avbildning', {incomplete: true})
+  steps.move(electronic, ['relatedTo', 'uri'], electronic, ['relatedTo', '@id'])
+  steps.complete().rename(electronic, 'relatedTo', 'image')
+
+</script>

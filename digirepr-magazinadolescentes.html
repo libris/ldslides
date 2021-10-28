@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<title>Representation 1 : LD Slides</title>
+<title>Linking and cleaning 1 : LD Slides</title>
 <meta charset="utf-8" />
 <link rel="stylesheet" href="ldslides.css" />
 <script type="module">
@@ -71,7 +71,7 @@
   const work = 'work-1'
   let library = {'@id': 'https://libris.kb.se/library/S'}
 
-  steps.display('Extrahera verket', {note: 'Så att vi kan dela det med faksimilen'})
+  steps.display('Extrahera verket', {note: 'Så att vi kan dela det med reproduktionen'})
   steps.extractAsLink(print, 'instanceOf', work)
 
   // Överkurs! Fixa till lite av varje i den tryckta...
@@ -93,7 +93,7 @@
   //steps.drop(inst2)
   //steps.complete().drop('agent-1')
 
-  steps.display('Ny elektronisk faksimil')
+  steps.display('Ny digital reproduktion')
   steps.create(`
     <electronic-1> a :Electronic ;
       :issuanceType :Monograph ;
@@ -109,8 +109,8 @@
   steps.display('Länka mediaobjekt')
   steps.add('electronic-1', 'associatedMedia', {'@id': 'digitalization-1'})
 
-  steps.display('Beskriv reproduktionen')
-  steps.add('electronic-1', 'reproduction', {
+  steps.display('Beskriv produktionen')
+  steps.add('electronic-1', 'production', {
     '@type': 'DigitalReproduction',
     year: '2021',
     agent: library,
@@ -119,7 +119,7 @@
   })
 
   steps.display('Länka licens')
-  steps.add('electronic-1', 'usageAndAccessPolicy', {'@id': 'https://id.kb.se/license/free'})
+  steps.add('electronic-1', 'usageAndAccessPolicy', {'@id': 'https://id.kb.se/policy/freelyavailable'})
 
   steps.display('Länka bibliografii')
   steps.add('electronic-1', 'meta', {'bibliography': {'@id': 'https://libris.kb.se/library/DIGI'}})
@@ -129,7 +129,7 @@
 
   steps.display('Skapa bestånd')
   steps.create(` <electronic-1-item-1> a :Item . `)
-  steps.display('Länka faksimil')
+  steps.display('Länka reproduktionen')
   steps.add('electronic-1-item-1', 'itemOf', {'@id': 'electronic-1'})
   steps.display('Länka bibliotek')
   steps.add('electronic-1-item-1', 'heldBy', library)

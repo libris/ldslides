@@ -160,17 +160,18 @@
           :inScheme [ a :ConceptScheme ;
               :code "kssb" ;
               :sameAs <https://id.kb.se/term/kssb%2F6/> ;
-              :version "6" ] ] ,
-        [ a :Classification ;
-          :code "Ubbbd-c/K" ;
-          :inScheme [ a :ConceptScheme ;
-              :code "kssb" ;
-              :version "6" ] ] ,
-        [ a :Classification ;
-          :code "Uh-c/K" ;
-          :inScheme [ a :ConceptScheme ;
-              :code "kssb" ;
-              :version "6" ] ] ;
+              :version "6" ] ] #,
+        ;
+        #[ a :Classification ;
+        #  :code "Ubbbd-c/K" ;
+        #  :inScheme [ a :ConceptScheme ;
+        #      :code "kssb" ;
+        #      :version "6" ] ] ,
+        #[ a :Classification ;
+        #  :code "Uh-c/K" ;
+        #  :inScheme [ a :ConceptScheme ;
+        #      :code "kssb" ;
+        #      :version "6" ] ] ;
       :contribution [ a :PrimaryContribution ;
           :agent <tr5757qc3zhq910#it> ] ;
       :genreForm <https://id.kb.se/marc/GovernmentPublicationType-1> ;
@@ -266,34 +267,33 @@
   steps.display('Extrahera verket till ny post')
   steps.extractAsLink(print, 'instanceOf', work)
 
-  steps.display('Länka matchat verk från faksimilen')
+  steps.display('Länka matchat verk från reproduktionen')
   steps.replace(electronic, 'instanceOf', ref(work))
 
-  steps.display('Länka matchat tryck från faksimilen')
+  steps.display('Länka matchat tryck från reproduktionen', {note: 'Här gör vi också om otherPhysicalFormat till reproductionOf. (Obs! reproductionOf är redan den som används i nya digitaliseringar).'})
   steps.replace(electronic, 'otherPhysicalFormat', ref(print), 'reproductionOf')
   steps.display('... och vice versa')
   steps.replace(print, 'otherPhysicalFormat', ref(electronic), 'hasReproduction')
+  steps.display('Men denna är <em>också</em> redundant och <em>räknas ut</em> via owl:inverseOf')
+  steps.drop(print, 'hasReproduction')
 
 
-  steps.display('Ta bort tryck-värden från faksimilen', {incomplete: true})
+  steps.display('Ta bort tryck-värden från reproduktionen', {incomplete: true})
   steps.drop(electronic, 'extent')
   steps.drop(electronic, 'hasDimensions')
   steps.drop(electronic, 'physicalDetailsNote')
   steps.drop(electronic, 'tableOfContents')
   steps.drop(electronic, 'manufacture')
   steps.drop(electronic, 'publication')
+  steps.drop(electronic, 'hasNote')
   steps.complete().drop(electronic, 'indirectlyIdentifiedBy')
 
-  steps.display('Ta bort klassifikation från faksimilen')
-  steps.drop(electronic, 'classification')
-
-  steps.display('Ta bort tryck-relationer från faksimilen', {incomplete: true})
-  steps.drop(electronic, 'hasNote')
+  steps.display('Ta bort tryck-relationer från reproduktionen', {incomplete: true})
   steps.drop(electronic, 'relationship')
   steps.complete().drop(electronic, 'seriesMembership')
 
-  steps.display('Typa trycket')
-  steps.replace(print, '@type', 'Print')
+  steps.display('Ta bort klassifikation från reproduktionen?', {note: 'Den finns på den tryckta (men hela frågan är mer komplex ("/K" är "Kartor in plano"; är det egentligen om verket (G/F)?)).'})
+  steps.drop(electronic, 'classification')
 
   steps.display('Ta bort klamrad undertitel', {
     incomplete: true,
@@ -309,6 +309,10 @@
     if (it === electronic) steps.complete()
     steps.drop(it, 'marc:mediaTerm')
   })
+
+  //steps.say('Putsa vidare på instansen...')
+  steps.display('Typa trycket')
+  steps.replace(print, '@type', 'Print')
 
   steps.display('Ta bort gammal form på serieenumeration')
   steps.drop(print, ['seriesMembership', 'marc:filingOfSeriesenumeration'])
