@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<title>Linking : LD Slides</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="ldslides.css" />
+<script type="module">
+  import {Steps} from './ldslides.js'
+
+  let steps = new Steps(window)
+
+
+  steps.load(`
+
+<oai:DiVA.org:liu-65999> a :Instance ;
+    :adminMetadata [ a :AdminMetadata ;
+            :assigner [ a :Agent ;
+                    :label "liu" ] ;
+            :creationDate "2011-03-01" ] ;
+    :carrier [ a :Carrier ;
+            :label "electronic" ] ;
+    :electronicLocator [ a :Resource ;
+            :label "Fulltext in repository" ;
+            :note <https://id.kb.se/term/swepub/publishedVersion> ;
+            :source [ a :Source ;
+                    :code "unpaywall.com" ;
+                    :TODO "OM INTE ÅTERFINNS I UNPAYWALL, BEHÅLLS INFORMATIONEN FRÅN LÄROSÄTET" ] ;
+            :TODO "FÖRSLAG PÅ HUR GÖRA SKILLNAD PÅ FÖRLAGSFULLTEXTER OCH FULLTEXTER I ARKIV" ;
+            :uri "http://liu.diva-portal.org/smash/get/diva2:401134/FULLTEXT01.pdf"^^xsd:anyURI ] ;
+            :usageAndAccessPolicy </unfree> ;
+    :identifiedBy [ a :Doi ;
+            :value "https://doi.org/10.2174/1875036201105010026" ],
+        [ a :URI ;
+            :value "http://urn.kb.se/resolve?urn=urn:nbn:se:liu:diva-65999" ] ;
+    :instanceOf [ a :Text ;
+            :contribution [ a :Contribution ;
+                    :agent [ a :Person ;
+                            :familyName "Hörnquist" ;
+                            :givenName "Michael" ;
+                            :lifeSpan "1969-" ] ;
+                    :role <http://id.loc.gov/vocabulary/relators/aut> ;
+                    :hasAffiliation [ a :Organization ;
+                            :language <https://id.kb.se/language/swe> ;
+                            foaf:name "Kommunikations- och transportsystem" ],
+                        [ a :Organization ;
+                            :identifiedBy [ a :URI ;
+                                    :source [ a :Source ;
+                                            :code "kb.se" ] ;
+                                    :value "liu.se" ] ;
+                            foaf:name "Linköpings universitet" ] ] ;
+                <https://id.kb.se/term/swepub/publication/journal-article>,
+                <https://id.kb.se/term/swepub/svep/ref> ;
+            :language <https://id.kb.se/language/eng> ;
+            :note [ a :CreatorCount ;
+                    :label "2" ],
+                <https://id.kb.se/term/swepub/Published> ;
+            :subject [ a :Topic ;
+                    :code "152400" ;
+                    :isMemberOfMADSScheme <http://issemantic.net/svep/swe> ;
+                    :prefLabel "Bioinformatik" ],
+                [ a :Topic ;
+                    :prefLabel "Systems biology" ],
+                [ a :Topic ;
+                    :code "152400" ;
+                    :isMemberOfMADSScheme <http://issemantic.net/svep/eng> ;
+                    :prefLabel "Bioinformatics" ] ;
+            :summary [ a :Summary ;
+                    :label "The inference of large-scale gene regulatory networks from high-throughput data sets has revealed a diverse picture of only partially overlapping descriptions [...]" ] ;
+            :title [ a :Title ;
+                    :mainTitle "Stability and Flexibility from a System Analysis of Gene RegulatoryNetworks Based on Ordinary Differential Equations" ] ] ;
+    :usageAndAccessPolicy <https://creativecommons.org/licenses/by/4.0/> ;
+    :partOf [ a :Work ;
+            :hasInstance [ a :Instance ;
+                    :extent [ a :Extent ;
+                            :label "26-33" ] ] ;
+            :identifiedBy [ a :Issn ;
+                    :value "1875-0362" ] ;
+            :title [ a :Title ;
+                    :mainTitle "The Open Bioinformatics Journal" ;
+                    :volumeNumber "5" ] ] ;
+    :publication [ a :Publication ;
+            :agent [ a :Agent ;
+                    :label "Bentham Open" ] ;
+            :date "2011" ] .
+
+<https://creativecommons.org/licenses/by/4.0/> a :AccessPolicy ;
+    :label "gratis" ;
+    :TODO "Hur anger vi att informationen kommer från Unpaywall? Kan behövas om vi behöver rensa bland flera angivna @type : 'AccessPolicy' och/eller skriva över/rätta till informationen som kommer från den levererande organisationen. Behöver det anges för varje subelement för sig? T.ex. om label 'gratis' finns angiven och är korrekt men licensinformation har berikats från Unpaywall? Hur kopplar vi usageAndAccessPolicy till rätt fulltextlänk? Går det att använda 'appliesTo' eller relatedTo med @id med URI till resursen?" .
+
+<https://id.kb.se/term/swepub/Published> a :PublicationStatus . # NOTE?
+
+
+<https://id.kb.se/term/swepub/publishedVersion> a :VersionStatus ;
+    :TODO "FÖRSLAG PÅ STATUS" ;
+    :editorsNote "Följande alternativa versioner: info:eu-repo/semantics/draft,info:eu-repo/semantics/submittedVersion, info:eu-repo/semantics/acceptedVersion, info:eu-repo/semantics/publishedVersion , info:eu-repo/semantics/updatedVersion" .
+
+`)
+  const ref = id => ( { ['@id']: id } )
+
+  const article = 'oai:DiVA.org:liu-65999'
+  // const work = 'work1#it'
+  const oa-policy = ref('https://id.kb.se/term/swepub/access/')
+
+  // steps.display('Extrahera verket till ny post')
+  // steps.extractAsLink(print, 'instanceOf', work)
+  
+  steps.display('Skapa doaj Accesspolicy'),
+              :genreForm <https://id.kb.se/term/swepub/access/doaj-journal>,
+  steps.create(`
+<ACCESSPOLICY> {
+# NAME THIS OA-POLICY?
+<https://id.kb.se/term/swepub/access> a :ConceptScheme; :code "access", :prefLabel "Swepub AccessPolicy" .
+
+# "FÖRSLAG PÅ EN ARTIKEL INGÅENDE I EN PUBLICERINGSKANAL SOM ÄR ÖPPET TILLGÄNGLIG ENLIGT UNPAYWALL UTIFRÅN INFORMATIONEN FRÅN DOAJ"
+<https://id.kb.se/term/swepub/access/doaj-journal> a :AccessPolicy; :code "doaj-journal" .
+
+# from institutions:
+<https://id.kb.se/term/swepub/access/gratis> a :AccessPolicy; :code "gratis" .
+<https://id.kb.se/term/swepub/access/restricted> a :AccessPolicy; :code "restricted" .
+
+} `)
+
+  steps.display('Lägg till doaj AccessPolicy'),
+  steps.replace(article, 'usageAndAccessPolicy', ref(`${oa-policy}/doaj-journal`))
+
+</script>
