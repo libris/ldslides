@@ -18,14 +18,22 @@
     :carrier [ a :Carrier ;
             :label "electronic" ] ;
     :electronicLocator [ a :Resource ;
-            :label "Fulltext in repository" ;
-            :note <https://id.kb.se/term/swepub/publishedVersion> ;
-            :source [ a :Source ;
-                    :code "unpaywall.com" ;
-                    :TODO "OM INTE ÅTERFINNS I UNPAYWALL, BEHÅLLS INFORMATIONEN FRÅN LÄROSÄTET" ] ;
-            :TODO "FÖRSLAG PÅ HUR GÖRA SKILLNAD PÅ FÖRLAGSFULLTEXTER OCH FULLTEXTER I ARKIV" ;
+            :comment "Fulltext in repository" ;
+            #:label "Fulltext in repository" ;
+            :status <https://id.kb.se/term/swepub/publishedVersion> ; <--- vi har redan PublishedVersion (beskriver hela publikationen) men denna just denna fulltext.
+            #:note <https://id.kb.se/term/swepub/publishedVersion> ;
+            :adminMetadata [ a :AdminMetadata ;
+                    :sourceConsulted [ a :SourceData ;
+                            :url "https://unpaywall.com" ] ;
+                            :date "2021-12-01" ] ;
+            :usageAndAccessPolicy <https://id.kb.se/policy/gratis> ;
+            :license <https://creativecommons.org/licenses/by/4.0/> ;
             :uri "http://liu.diva-portal.org/smash/get/diva2:401134/FULLTEXT01.pdf"^^xsd:anyURI ] ;
-            :usageAndAccessPolicy </unfree> ;
+      [ a :Resource ;
+            # originaldata :note [ a bf2:Note ; rdfs:label "primary" ; bf2:noteType "URL usage" ] ;
+            :uri "http://liu.diva-portal.org/smash/get/diva2:401134/FULLTEXT01.pdf"^^xsd:anyURI ] ;
+            :comment "Fulltext in repository" ; # was label
+            TODO:usageAndAccessPolicy [a :Embargo ; :endDate "2022-04" ; ] ;
     :identifiedBy [ a :Doi ;
             :value "https://doi.org/10.2174/1875036201105010026" ],
         [ a :URI ;
@@ -66,7 +74,9 @@
                     :label "The inference of large-scale gene regulatory networks from high-throughput data sets has revealed a diverse picture of only partially overlapping descriptions [...]" ] ;
             :title [ a :Title ;
                     :mainTitle "Stability and Flexibility from a System Analysis of Gene RegulatoryNetworks Based on Ordinary Differential Equations" ] ] ;
-    :usageAndAccessPolicy <https://creativecommons.org/licenses/by/4.0/> ;
+    :usageAndAccessPolicy </gratis> ;
+    :license <https://creativecommons.org/licenses/by/4.0/> ;
+    # Spara från lärosätet? :usageAndAccessPolicy [ a bf2:AccessPolicy ; rdfs:label "gratis" ] ; 
     :partOf [ a :Work ;
             :hasInstance [ a :Instance ;
                     :extent [ a :Extent ;
@@ -79,7 +89,9 @@
     :publication [ a :Publication ;
             :agent [ a :Agent ;
                     :label "Bentham Open" ] ;
-            :date "2011" ] .
+            :date "2011" ;
+            :status <https://id.kb.se/term/swepub/publishedVersion> ] ;
+    :status <https://id.kb.se/term/swepub/access/doaj-journal> .
 
 <https://creativecommons.org/licenses/by/4.0/> a :AccessPolicy ;
     :label "gratis" ;
@@ -97,7 +109,7 @@
 
   const article = 'oai:DiVA.org:liu-65999'
   // const work = 'work1#it'
-  const oa-policy = ref('https://id.kb.se/term/swepub/access/')
+  const oa_policy = ref('https://id.kb.se/term/swepub/access/')
 
   // steps.display('Extrahera verket till ny post')
   // steps.extractAsLink(print, 'instanceOf', work)
@@ -105,19 +117,35 @@
   steps.display('Skapa doaj Accesspolicy'),
   steps.create(`
 <ACCESSPOLICY> {
-# NAME THIS OA-POLICY?
-<https://id.kb.se/term/swepub/access> a :ConceptScheme; :code "access", :prefLabel "Swepub AccessPolicy" .
 
 # "FÖRSLAG PÅ EN ARTIKEL INGÅENDE I EN PUBLICERINGSKANAL SOM ÄR ÖPPET TILLGÄNGLIG ENLIGT UNPAYWALL UTIFRÅN INFORMATIONEN FRÅN DOAJ"
-<https://id.kb.se/term/swepub/access/doaj-journal> a :AccessPolicy; :code "doaj-journal" .
+# <https://id.kb.se/term/swepub/access/doaj-journal> a :AccessPolicy; :code "doaj-journal" .
 
-# from institutions:
-<https://id.kb.se/term/swepub/access/gratis> a :AccessPolicy; :code "gratis" .
-<https://id.kb.se/term/swepub/access/restricted> a :AccessPolicy; :code "restricted" .
+# OA policies:
+<https://id.kb.se/policy/gratis> a :AccessPolicy; :code "gratis"; :label "Öppen tillgång" .
+<https://id.kb.se/policy/restricted> a :AccessPolicy; :code "restricted"; :label "Ej öppen tillgång" .
 
 } `)
 
   steps.display('Lägg till doaj AccessPolicy'),
-  steps.replace(article, 'usageAndAccessPolicy', ref(`${oa-policy}/doaj-journal`))
+  steps.replace(article, 'usageAndAccessPolicy', ref(`${oa_policy}/doaj-journal`))
+
+  steps.display('Beskriv ny öppen publicerad artikel med info från unpaywall')
+  steps.add('oai:DiVA.org:liu-65999', 'electronicLocator', {
+    '@type': 'Resource',
+    adminMetadata: [
+      '@type': 'AdminMetadata',
+      sourceConsulted: [
+        '@type': 'SourceData',
+        url: 'https://unpaywall.com',
+        date: '2021-12-01'
+      ]
+    ],
+    comment: 'Fulltext in repository',
+    license: {'@id': 'https://creativecommons.org/licenses/by/4.0/'},
+    status: {'@id': 'https://id.kb.se/term/swepub/publishedVersion'},
+    uri: 'http://liu.diva-portal.org/smash/get/diva2:401134/FULLTEXT01.pdf',
+    usageAndAccessPolicy: {'@id': 'https://id.kb.se/policy/gratis'}
+  })
 
 </script>
