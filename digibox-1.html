@@ -10,9 +10,9 @@
   steps.display("Hitta lådan i katalogen...", {note: "Eller katalogisera den i sin helhet om den inte finns beskriven"})
 
   steps.load(`
-  graph <tc57gr050kk1bgn> {
+  graph <https://libris.kb.se/tc57gr050kk1bgn> {
 
-    <tc57gr050kk1bgn#it> a :Instance ;
+    <https://libris.kb.se/tc57gr050kk1bgn#it> a :Instance ;
       :issuanceType :Collection ;
       :mediaType <https://id.kb.se/term/rda/Unmediated> ;
       :carrierType <https://id.kb.se/term/rda/Volume> ;
@@ -25,10 +25,10 @@
       :instanceOf [
 
     a :Text ;
+      :contentType <https://id.kb.se/term/rda/Text> ;
       :subject <https://id.kb.se/term/sao/Hembygdsf%C3%B6reningar> ,
               <https://id.kb.se/geo/Sverige/Lappland/Soutuj%C3%A4rvi> ;
       :language <https://id.kb.se/language/swe> ;
-      :contentType <https://id.kb.se/term/rda/Text> ;
       :contribution [ :role <https://id.kb.se/relator/issuingBody> ;
           a :PrimaryContribution ;
           :agent [ :name "Soutujärvi hembygdsförening" ;
@@ -39,24 +39,22 @@
 
   steps.display("... via beståndet")
   steps.create(`
-  graph <rw3gnxkx0rh6pnt?lens=card> {
-    <rw3gnxkx0rh6pnt#it> a :Item ;
+  graph <https://libris.kb.se/rw3gnxkx0rh6pnt> {
+    <https://libris.kb.se/rw3gnxkx0rh6pnt#it> a :Item ;
       :heldBy <library/S> ;
-      :itemOf <tc57gr050kk1bgn#it> ;
+      :itemOf <https://libris.kb.se/tc57gr050kk1bgn#it> ;
       :label "Vardagstryck" .
   }
   `)
-  //steps.add('rw3gnxkx0rh6pnt#it', 'itemOf', {'@id': 'tc57gr050kk1bgn#it'})
 
-  steps.display('Upprätta samlande digitisering..', {note: "... för att hålla reda på vilka delar som digitiseras"})
+  steps.display('Upprätta samlande digitisering', {note: "... för att hålla reda på vilka delar som digitiseras"})
   steps.create(`
   graph <new6294c55e> {
     <new6294c55e#it> a :Electronic ;
-      :issuanceType :Collection .
+      :issuanceType :Collection ;
+      :reproductionOf <https://libris.kb.se/tc57gr050kk1bgn#it> .
   }
   `)
-  steps.display("... ... som representerar lådan")
-  steps.add('new6294c55e#it', 'reproductionOf', {'@id': 'tc57gr050kk1bgn#it'})
 
   steps.display('Digitisera en trycksak till data.kb.se')
   steps.create(`
@@ -91,46 +89,22 @@
   steps.add('new6294c514#it', 'isPartOf', {'@id': 'new6294c55e#it'})
 
   steps.display('Fyll på med okatalogiserade trycksaker...', {incomplete: true, note: "på miniminivå utan individuellt beskrivet material"})
-  steps.create(`
-  graph <https:/data.kb.se/6294e3a9?about=print-2.jpg> {
-    <https:/data.kb.se/6294e3a9/print-2.jpg> a :File ;
-      :representationOf [ a :Electronic ;
+
+  for (var i=0; i < 5; i++) {
+    let slug = (1653927621 + i).toString(16)
+    steps.create(`
+    graph <https:/data.kb.se/6294cbf3?about=print-${i}.jpg> {
+      <https:/data.kb.se/6294cbf3/print-${i}.jpg> a :File ;
+        :representationOf <${slug}#it> .
+    }
+    graph <${slug}> {
+      <${slug}#it> a :Electronic ;
           :reproductionOf [a :Print ] ;
-          :isPartOf <new6294c55e#it> ] .
+          :isPartOf <new6294c55e#it> .
+    }
+    `)
   }
-  `)
-  steps.create(`
-  graph <https:/data.kb.se/6294e3aa?about=print-2.jpg> {
-    <https:/data.kb.se/6294e3aa/print-2.jpg> a :File ;
-      :representationOf [ a :Electronic ;
-          :reproductionOf [a :Print ] ;
-          :isPartOf <new6294c55e#it> ] .
-  }
-  `)
-  steps.create(`
-  graph <https:/data.kb.se/6294e3ac?about=print-2.jpg> {
-    <https:/data.kb.se/6294e3ac/print-2.jpg> a :File ;
-      :representationOf [ a :Electronic ;
-          :reproductionOf [a :Print ] ;
-          :isPartOf <new6294c55e#it> ] .
-  }
-  `)
-  steps.create(`
-  graph <https:/data.kb.se/6294e3ad?about=print-2.jpg> {
-    <https:/data.kb.se/6294e3ad/print-2.jpg> a :File ;
-      :representationOf [ a :Electronic ;
-          :reproductionOf [a :Print ] ;
-          :isPartOf <new6294c55e#it> ] .
-  }
-  `)
-  steps.create(`
-  graph <https:/data.kb.se/6294e3ae?about=print-2.jpg> {
-    <https:/data.kb.se/6294e3ae/print-2.jpg> a :File ;
-      :representationOf [ a :Electronic ;
-          :reproductionOf [a :Print ] ;
-          :isPartOf <new6294c55e#it> ] .
-  }
-  `)
+
   steps.complete().highlight({'@id': 'new6294c55e#it'}, true)
 
 </script>
