@@ -189,7 +189,10 @@ export class Steps {
       let data = typeof o === 'string' ? await this.parse(o) : o
       for (let item of data[GRAPH]) this.data[GRAPH].push(item)
       this.redraw()
-      for (let item of data[GRAPH]) this.highlight(item, true)
+      for (let item of data[GRAPH]) {
+        if (GRAPH in item) for (let it of item[GRAPH]) this.highlight(it, true)
+        else this.highlight(item, true)
+      }
     })
   }
 
