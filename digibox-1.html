@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<title>Digitisera en låda med trycksaker : LD Slides</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="ldslides.css" />
+<script type="module">
+  import {Steps} from './ldslides.js'
+
+  let steps = new Steps(window)
+
+  steps.display("Hitta lådan i katalogen...", {note: "Eller katalogisera den i sin helhet om den inte finns beskriven"})
+
+  steps.load(`
+  graph <tc57gr050kk1bgn> {
+
+    <tc57gr050kk1bgn#it> a :Instance ;
+      :issuanceType :Collection ;
+      :mediaType <https://id.kb.se/term/rda/Unmediated> ;
+      :carrierType <https://id.kb.se/term/rda/Volume> ;
+      :hasTitle [ a :Title ;
+          :mainTitle "Soutujärvi hembygdsförening - samling av trycksaker" ] ;
+      :production [ a :PrimaryProduction ;
+          :country <https://id.kb.se/country/sw> ;
+          :endYear "9999" ;
+          :startYear "2011" ] ;
+      :instanceOf [
+
+    a :Text ;
+      :subject <https://id.kb.se/term/sao/Hembygdsf%C3%B6reningar> ,
+              <https://id.kb.se/geo/Sverige/Lappland/Soutuj%C3%A4rvi> ;
+      :language <https://id.kb.se/language/swe> ;
+      :contentType <https://id.kb.se/term/rda/Text> ;
+      :contribution [ :role <https://id.kb.se/relator/issuingBody> ;
+          a :PrimaryContribution ;
+          :agent [ :name "Soutujärvi hembygdsförening" ;
+              a :Organization ] ]
+    ] .
+  }
+  `)
+
+  steps.display("... via beståndet")
+  steps.create(`
+  graph <rw3gnxkx0rh6pnt?lens=card> {
+    <rw3gnxkx0rh6pnt#it> a :Item ;
+      :heldBy <library/S> ;
+      :itemOf <tc57gr050kk1bgn#it> ;
+      :label "Vardagstryck" .
+  }
+  `)
+  //steps.add('rw3gnxkx0rh6pnt#it', 'itemOf', {'@id': 'tc57gr050kk1bgn#it'})
+
+  steps.display('Upprätta samlande digitisering..', {note: "... för att hålla reda på vilka delar som digitiseras"})
+  steps.create(`
+  graph <new6294c55e> {
+    <new6294c55e#it> a :Electronic ;
+      :issuanceType :Collection .
+  }
+  `)
+  steps.display("... ... som representerar lådan")
+  steps.add('new6294c55e#it', 'reproductionOf', {'@id': 'tc57gr050kk1bgn#it'})
+
+  steps.display('Digitisera en trycksak till data.kb.se')
+  steps.create(`
+  graph <https:/data.kb.se/6294cbf3?about=print-1.jpg> {
+    <https:/data.kb.se/6294cbf3/print-1.jpg> a :File .
+  }
+  `)
+
+  steps.display('Katalogisera digitiseringen...')
+  steps.create(`
+  graph <new6294c514> {
+
+    <new6294c514#it> a :Electronic ;
+      :reproductionOf [
+
+    a :Print ;
+      :hasTitle [ a :Title ;
+          :mainTitle "Från hembygden till Humlegården" ] ;
+      :instanceOf [
+
+    a :Work ;
+      :subject <https://id.kb.se/term/sao/Humleg%C3%A5rden>
+    ] ] .
+  }
+  `)
+
+  steps.display('... av filen ...')
+  steps.add('https:/data.kb.se/6294cbf3/print-1.jpg',
+            'representationOf', {'@id': 'new6294c514#it'})
+
+  steps.display('... som ligger i "den digitala" lådan')
+  steps.add('new6294c514#it', 'isPartOf', {'@id': 'new6294c55e#it'})
+
+  steps.display('Fyll på med okatalogiserade trycksaker...', {incomplete: true, note: "på miniminivå utan individuellt beskrivet material"})
+  steps.create(`
+  graph <https:/data.kb.se/6294e3a9?about=print-2.jpg> {
+    <https:/data.kb.se/6294e3a9/print-2.jpg> a :File ;
+      :representationOf [ a :Electronic ;
+          :reproductionOf [a :Print ] ;
+          :isPartOf <new6294c55e#it> ] .
+  }
+  `)
+  steps.create(`
+  graph <https:/data.kb.se/6294e3aa?about=print-2.jpg> {
+    <https:/data.kb.se/6294e3aa/print-2.jpg> a :File ;
+      :representationOf [ a :Electronic ;
+          :reproductionOf [a :Print ] ;
+          :isPartOf <new6294c55e#it> ] .
+  }
+  `)
+  steps.create(`
+  graph <https:/data.kb.se/6294e3ac?about=print-2.jpg> {
+    <https:/data.kb.se/6294e3ac/print-2.jpg> a :File ;
+      :representationOf [ a :Electronic ;
+          :reproductionOf [a :Print ] ;
+          :isPartOf <new6294c55e#it> ] .
+  }
+  `)
+  steps.create(`
+  graph <https:/data.kb.se/6294e3ad?about=print-2.jpg> {
+    <https:/data.kb.se/6294e3ad/print-2.jpg> a :File ;
+      :representationOf [ a :Electronic ;
+          :reproductionOf [a :Print ] ;
+          :isPartOf <new6294c55e#it> ] .
+  }
+  `)
+  steps.create(`
+  graph <https:/data.kb.se/6294e3ae?about=print-2.jpg> {
+    <https:/data.kb.se/6294e3ae/print-2.jpg> a :File ;
+      :representationOf [ a :Electronic ;
+          :reproductionOf [a :Print ] ;
+          :isPartOf <new6294c55e#it> ] .
+  }
+  `)
+  steps.complete().highlight({'@id': 'new6294c55e#it'}, true)
+
+</script>
