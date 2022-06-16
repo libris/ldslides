@@ -42,7 +42,7 @@ export class Steps {
       window.dumpTurtle = async () => {
         const serializer = await import('//niklasl.github.io/ldtr/lib/trig/serializer.js')
         let chunks = []
-        serializer.serialize(steps.data, {write (chunk) {chunks.push(chunk)}})
+        serializer.serialize(this.steps.data, {write (chunk) {chunks.push(chunk)}})
         console.log(chunks.join(''))
       }
 
