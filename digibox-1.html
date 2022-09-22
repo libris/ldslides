@@ -82,24 +82,29 @@
   `)
 
   steps.display('... av filen ...')
-  steps.add('https:/data.kb.se/6294cbf3/print-1.jpg',
-            'representationOf', {'@id': 'new6294c514#it'})
+  steps.add('new6294c514#it',
+            'hasRepresentation', {'@id': 'https:/data.kb.se/6294cbf3/print-1.jpg'})
+
+  steps.display('... med lokalt id ...')
+  let htime = () => Math.floor(new Date().getTime() / 1000).toString(16)
+  steps.add('new6294c514#it', 'identifiedBy', {'@type': 'Local', 'value': `SomeRegId-${htime()}-1`})
 
   steps.display('... som ligger i "den digitala" lådan')
   steps.add('new6294c514#it', 'isPartOf', {'@id': 'new6294c55e#it'})
 
   steps.display('Fyll på med okatalogiserade trycksaker...', {incomplete: true, note: "på miniminivå utan individuellt beskrivet material"})
 
-  for (var i=0; i < 5; i++) {
+  for (var i=2; i < 5; i++) {
     let slug = (1653927621 + i).toString(16)
     steps.create(`
     graph <https:/data.kb.se/6294cbf3?about=print-${i}.jpg> {
-      <https:/data.kb.se/6294cbf3/print-${i}.jpg> a :File ;
-        :representationOf <${slug}#it> .
+      <https:/data.kb.se/6294cbf3/print-${i}.jpg> a :File .
     }
     graph <${slug}> {
       <${slug}#it> a :Electronic ;
           :reproductionOf [a :Print ] ;
+          :hasRepresentation <https:/data.kb.se/6294cbf3/print-${i}.jpg> ;
+          :identifiedBy [ a :Local ; :value "SomeRegId-${htime()}-${i}" ] ;
           :isPartOf <new6294c55e#it> .
     }
     `)
