@@ -6,6 +6,7 @@ import { CONTEXT, GRAPH, ID, TYPE, VALUE, LANGUAGE, LIST } from '//niklasl.githu
 
 const PLAY_SYMBOL = '\u25B6'
 const BACK_SYMBOL = '\u25C0\u25C0'
+const SOURCE_SYMBOL = '\u{1F441}'
 
 export class Steps {
   constructor (window) {
@@ -34,19 +35,52 @@ export class Steps {
       this.nextBtn.addEventListener('click', evt => {
         this.nextStep()
       })
+      this.nextBtn.classList.add('next')
       this.doc.body.appendChild(this.nextBtn)
       this.nextBtn.focus()
+
+      this.setupViewSourceOverlay()
+
       this.nextStep()
 
-      // TODO: add btm-rght button (show on hover) with showTurtle in textarea?
-      window.dumpTurtle = async () => {
-        const serializer = await import('//niklasl.github.io/ldtr/lib/trig/serializer.js')
-        let chunks = []
-        serializer.serialize(this.steps.data, {write (chunk) {chunks.push(chunk)}})
-        console.log(chunks.join(''))
-      }
-
+      window.ldsteps = this
     }
+  }
+
+  setupViewSourceOverlay() {
+    this.overlay = this.doc.createElement('div')
+    this.overlay.classList.add('overlay')
+    this.overlay.classList.add('hidden')
+    this.doc.body.appendChild(this.overlay)
+
+    this.code = this.doc.createElement('textarea')
+    this.code.spellcheck = false
+    this.code.classList.add('code')
+    this.overlay.appendChild(this.code)
+
+    const sourceBtn = this.doc.createElement('button')
+    sourceBtn.classList.add('source')
+    sourceBtn.innerText = SOURCE_SYMBOL
+    sourceBtn.addEventListener('click', async evt => {
+      if (this.overlay.classList.contains('hidden')) {
+        await this.dumpTurtle()
+        this.overlay.classList.remove('hidden')
+      } else {
+        this.overlay.classList.add('hidden')
+      }
+    })
+    this.doc.body.appendChild(sourceBtn)
+  }
+
+  async dumpTurtle () {
+    const serializer = await import('//niklasl.github.io/ldtr/lib/trig/serializer.js')
+    if (!this.data) return
+
+    let chunks = []
+    serializer.serialize(this.data, {write (chunk) {chunks.push(chunk)}})
+    let repr = chunks.join('')
+
+    this.code.value = repr
   }
 
   nextStep () {

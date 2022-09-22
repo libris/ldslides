@@ -109,9 +109,6 @@ div.note.showing {
 
 button {
   position: fixed;
-  bottom: 1.2em;
-  right: 1.2em;
-  z-index: 100;
   width: 3em;
   height: 3em;
   border: none;
@@ -126,4 +123,44 @@ button {
 }
 button:focus {
   box-shadow: 1px 1px 3px #111;
+}
+
+button.next {
+  bottom: 1.2em;
+  right: 1.2em;
+  z-index: 100;
+}
+
+button.source {
+  bottom: 1.2em;
+  left: 1.2em;
+  z-index: 100;
+  opacity: 0;
+  transition: 0.4s opacity;
+}
+
+button.source:hover {
+  opacity: 1;
+}
+
+div.overlay {
+  position: fixed;
+  top: 2em;
+  left: 50%;
+  margin-left: -36em;
+  z-index: 200;
+}
+
+textarea.code {
+  font-family: "Courier", "Courier New", monospace;
+  font-weight: bold;
+  width: 72em;
+  height: 42em;
+  white-space: pre-line;
+  background-color: #333;
+  color: #fff;
+}
+
+.hidden {
+  visibility: hidden;
 }
